@@ -768,7 +768,7 @@ function drawOverlays(ctx, an, cx, cy, D) {
     ctx.moveTo(x0 + .06 * D, ey); ctx.lineTo(x0 + .2 * D, ey); ctx.moveTo(x0 + .8 * D, ey); ctx.lineTo(x0 + .94 * D, ey);
     ctx.stroke();
   }
-  if (an) {
+  if (an && S.guides.marks) {
     // hauteur des yeux détectée (ligne horizontale) : verte si elle tombe sur les repères, rouge sinon
     const y = y0 + an.mid.v * D, half = Math.max(an.iod * 1.1, .12) * D, xm = x0 + an.mid.u * D;
     ctx.setLineDash([10 * dpr, 6 * dpr]); ctx.lineWidth = 2.5 * dpr;
