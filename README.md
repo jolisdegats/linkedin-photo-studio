@@ -18,12 +18,15 @@ et il s'ouvre dans le navigateur. Les photos ne quittent jamais ta machine.
     clavier ;
   - *Filter* : Original, Studio, Spotlight, Prime, Classic, Edge, Luminate ;
   - *Adjust* : Brightness, Contrast, Saturation, Vignette.
-- **Repères de cadrage** : grille des tiers, ovale cible pour la tête, repères
-  de hauteur des yeux.
-- **Assistant** : détection du visage (MediaPipe, en local dans le navigateur)
-  et conseils en direct : taille du visage, hauteur des yeux, centrage,
-  inclinaison, lumière, résolution. Le bouton **✨ Auto-cadrer** redresse la
-  tête et la place sur les repères.
+- **Repères de cadrage** : grille des tiers, ovale cible pour le visage,
+  repères de hauteur des yeux, et ligne des yeux détectée (verte quand elle
+  tombe sur les repères).
+- **Assistant** : repérage des yeux (MediaPipe Face Landmarker, en local dans
+  le navigateur) et conseils en direct : taille du visage, hauteur des yeux,
+  centrage, lumière, résolution. Le bouton **✨ Auto-cadrer** règle le zoom et
+  place les yeux sur les repères, sans toucher à l'inclinaison de la tête
+  (seule une photo prise de côté est remise dans le bon sens, par quart de
+  tour).
 - **Avant / Après** : importe ta photo actuelle, puis bascule entre les deux
   avec la barre d'espace ou le bouton « Actuelle / Nouvelle ».
 - **Téléchargement** : JPG carré (à uploader sur LinkedIn, qui découpe le rond
@@ -56,4 +59,3 @@ photos de profil réussies :
 | Hauteur des yeux | 37 % | 31 – 43 % |
 | Écart entre les yeux (≈ tête à 60 % du cercle) | 16 % | 12,5 – 21 % |
 | Centrage horizontal | 50 % | ± 6 % |
-| Inclinaison | 0° | ± 2,5° |

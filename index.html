@@ -427,7 +427,7 @@ const BG = '#a8a8a8';    // gris de la zone hors photo, comme LinkedIn
 
 // Cible de cadrage, en fractions du diamètre du cercle (mesuré sur des photos de profil LinkedIn réussies) :
 // yeux à ~37 % de la hauteur, écart entre les yeux ~16 % du diamètre ≈ tête qui occupe ~60 % du cercle.
-const TARGET = { iod: 0.16, iodMin: 0.125, iodMax: 0.21, eyeV: 0.37, eyeMin: 0.31, eyeMax: 0.43, centerTol: 0.06, tiltTol: 2.5 };
+const TARGET = { iod: 0.16, iodMin: 0.125, iodMax: 0.21, eyeV: 0.37, eyeMin: 0.31, eyeMax: 0.43, centerTol: 0.06 };
 
 const GHOST = 'data:image/svg+xml,' + encodeURIComponent(
   '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><rect width="128" height="128" fill="#dce6f1"/>' +
@@ -577,15 +577,16 @@ const exportSize = e => clamp(Math.round(Math.min(S.src.width, S.src.height) / e
 
 /* ════════════ Détection de visage (MediaPipe, chargé à la demande) ════════════ */
 const MP = 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14';
-const MODEL = 'https://storage.googleapis.com/mediapipe-models/face_detector/blaze_face_short_range/float16/1/blaze_face_short_range.tflite';
+// FaceLandmarker (478 points) : bien plus précis que le simple détecteur pour situer les yeux
+const MODEL = 'https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task';
 let detectorP = null;
 function getDetector() {
   if (!detectorP) {
     detectorP = (async () => {
       const vision = await import(MP + '/vision_bundle.mjs');
       const files = await vision.FilesetResolver.forVisionTasks(MP + '/wasm');
-      return vision.FaceDetector.createFromOptions(files, {
-        baseOptions: { modelAssetPath: MODEL, delegate: 'CPU' }, runningMode: 'IMAGE', minDetectionConfidence: .5 });
+      return vision.FaceLandmarker.createFromOptions(files, {
+        baseOptions: { modelAssetPath: MODEL, delegate: 'CPU' }, runningMode: 'IMAGE', numFaces: 3, minFaceDetectionConfidence: .5 });
     })();
     detectorP.catch(() => { detectorP = null; });
   }
@@ -593,22 +594,23 @@ function getDetector() {
 }
 function detectIn(det, src) { // meilleur visage dans un canvas → points clés en pixels de ce canvas
   const W = src.width, H = src.height, m = Math.min(W, H);
-  // Le modèle « short range » préfère les visages assez grands : on essaie la photo entière puis des recadrages.
+  // Le détecteur intégré préfère les visages assez grands : on essaie la photo entière puis des recadrages.
   const crops = [[0, 0, W, H], [(W - m) / 2, (H - m) / 2, m, m], [(W - m * .6) / 2, (H - m * .6) * .3, m * .6, m * .6]];
   for (const [x0, y0, cw, ch] of crops) {
     const k = Math.min(1, 640 / Math.max(cw, ch));
     const c = document.createElement('canvas'); c.width = Math.round(cw * k); c.height = Math.round(ch * k);
     c.getContext('2d').drawImage(src, x0, y0, cw, ch, 0, 0, c.width, c.height);
-    let best = null, bestScore = 0;
-    for (const d of det.detect(c).detections || []) {
-      const kp = d.keypoints || [];
-      if (kp.length < 4) continue;
-      const score = (d.categories?.[0]?.score || 0) * (d.boundingBox ? d.boundingBox.width * d.boundingBox.height : 1);
-      if (score > bestScore) { bestScore = score; best = kp; }
+    let best = null, bestArea = 0;
+    for (const lm of det.detect(c).faceLandmarks || []) { // on garde le plus grand visage
+      if (lm.length < 468) continue;
+      const xs = lm.map(p => p.x), ys = lm.map(p => p.y);
+      const area = (Math.max(...xs) - Math.min(...xs)) * (Math.max(...ys) - Math.min(...ys));
+      if (area > bestArea) { bestArea = area; best = lm; }
     }
     if (best) {
-      const P = i => ({ x: x0 + best[i].x * cw, y: y0 + best[i].y * ch });
-      return { e1: P(0), e2: P(1), nose: P(2), mouth: P(3) };
+      const P = (...ids) => ({ x: x0 + ids.reduce((t, i) => t + best[i].x, 0) / ids.length * cw, y: y0 + ids.reduce((t, i) => t + best[i].y, 0) / ids.length * ch });
+      // centre de chaque œil = milieu de ses deux coins (stable même si le regard part de côté)
+      return { e1: P(33, 133), e2: P(362, 263), nose: P(1), mouth: P(13, 14) };
     }
   }
   return null;
@@ -654,30 +656,21 @@ function analyze(e) {
   const a = toCircle(e, S.face.e1), b = toCircle(e, S.face.e2);
   const mid = { u: (a.u + b.u) / 2, v: (a.v + b.v) / 2 };
   const iod = Math.hypot(b.u - a.u, b.v - a.v);
-  let tilt = Math.atan2(b.v - a.v, b.u - a.u) * 180 / Math.PI;
-  if (tilt > 90) tilt -= 180; else if (tilt <= -90) tilt += 180;
-  return { a, b, mid, iod, tilt,
+  return { a, b, mid, iod,
     sizeOk: iod >= TARGET.iodMin && iod <= TARGET.iodMax,
     eyeOk: mid.v >= TARGET.eyeMin && mid.v <= TARGET.eyeMax,
-    centerOk: Math.abs(mid.u - .5) <= TARGET.centerTol,
-    tiltOk: Math.abs(tilt) <= TARGET.tiltTol };
+    centerOk: Math.abs(mid.u - .5) <= TARGET.centerTol };
 }
 
 function autoFrame(e) {
   const f = S.face; if (!f) return;
   const fx = e.fh ? -1 : 1, fy = e.fv ? -1 : 1;
   const em = { x: (f.e1.x + f.e2.x) / 2, y: (f.e1.y + f.e2.y) / 2 };
-  // « haut » de la tête = de la bouche vers les yeux → doit pointer vers le haut de l'écran
-  const thUp = -Math.PI / 2 - Math.atan2((em.y - f.mouth.y) * fy, (em.x - f.mouth.x) * fx);
-  // ligne des yeux parfaitement horizontale, avec le sens donné par thUp
-  const phi = Math.atan2((f.e2.y - f.e1.y) * fy, (f.e2.x - f.e1.x) * fx);
-  let best = thUp, bd = Infinity;
-  for (let k = -3; k <= 3; k++) {
-    const t = -phi + k * Math.PI, dd = Math.abs(Math.atan2(Math.sin(t - thUp), Math.cos(t - thUp)));
-    if (dd < bd) { bd = dd; best = t; }
-  }
-  const deg = best * 180 / Math.PI, r = Math.round(deg / 90);
-  e.rot = ((r % 4) + 4) % 4; e.angle = Math.round((deg - r * 90) * 10) / 10;
+  // On ne redresse pas une tête penchée (c'est souvent voulu) : on corrige seulement une photo couchée,
+  // par quart de tour, pour que le haut de la tête (bouche → yeux) pointe vers le haut. Rotate reste intact.
+  const thUp = (-Math.PI / 2 - Math.atan2((em.y - f.mouth.y) * fy, (em.x - f.mouth.x) * fx)) * 180 / Math.PI;
+  const r = Math.round((thUp - e.angle) / 90);
+  e.rot = ((r % 4) + 4) % 4;
   const iodSrc = Math.hypot(f.e2.x - f.e1.x, f.e2.y - f.e1.y);
   // Zoom idéal d'après l'écart entre les yeux ; mais si la photo manque de marge (tête collée au bord),
   // on cherche autour le meilleur compromis taille / hauteur des yeux / centrage.
@@ -751,22 +744,20 @@ function drawOverlays(ctx, an, cx, cy, D) {
     ctx.stroke();
   }
   if (S.guides.marks) {
-    // ovale cible de la tête + petits repères de la hauteur idéale des yeux
+    // ovale cible du visage (front → menton) + petits repères de la hauteur idéale des yeux
     ctx.setLineDash([6 * dpr, 6 * dpr]); ctx.strokeStyle = 'rgba(255,255,255,.8)'; ctx.lineWidth = 1.5 * dpr;
-    ctx.beginPath(); ctx.ellipse(x0 + .5 * D, y0 + (TARGET.eyeV + .02) * D, .2 * D, .29 * D, 0, 0, Math.PI * 2); ctx.stroke();
+    ctx.beginPath(); ctx.ellipse(x0 + .5 * D, y0 + (TARGET.eyeV + .045) * D, .155 * D, .215 * D, 0, 0, Math.PI * 2); ctx.stroke();
     ctx.setLineDash([]); ctx.lineWidth = 2 * dpr; ctx.beginPath();
     const ey = y0 + TARGET.eyeV * D;
     ctx.moveTo(x0 + .06 * D, ey); ctx.lineTo(x0 + .2 * D, ey); ctx.moveTo(x0 + .8 * D, ey); ctx.lineTo(x0 + .94 * D, ey);
     ctx.stroke();
   }
   if (an) {
-    // ligne des yeux détectée : verte si bien placée et droite, rouge sinon
-    const good = an.eyeOk && an.tiltOk;
-    const ax = x0 + an.a.u * D, ay = y0 + an.a.v * D, bx = x0 + an.b.u * D, by = y0 + an.b.v * D;
-    const len = Math.hypot(bx - ax, by - ay) || 1, ux = (bx - ax) / len, uy = (by - ay) / len, ext = len * .75;
+    // hauteur des yeux détectée (ligne horizontale) : verte si elle tombe sur les repères, rouge sinon
+    const y = y0 + an.mid.v * D, half = Math.max(an.iod * 1.1, .12) * D, xm = x0 + an.mid.u * D;
     ctx.setLineDash([10 * dpr, 6 * dpr]); ctx.lineWidth = 2.5 * dpr;
-    ctx.strokeStyle = good ? '#3ddc84' : '#ff4d4f';
-    ctx.beginPath(); ctx.moveTo(ax - ux * ext, ay - uy * ext); ctx.lineTo(bx + ux * ext, by + uy * ext); ctx.stroke();
+    ctx.strokeStyle = an.eyeOk ? '#3ddc84' : '#ff4d4f';
+    ctx.beginPath(); ctx.moveTo(xm - half, y); ctx.lineTo(xm + half, y); ctx.stroke();
   }
   ctx.restore();
   ctx.setLineDash([]); ctx.strokeStyle = '#fff'; ctx.lineWidth = 2 * dpr;
@@ -798,7 +789,6 @@ function refreshAssist() {
       : ['ok', 'Hauteur des yeux']);
     const du = an.mid.u - .5;
     items.push(Math.abs(du) > TARGET.centerTol ? ['warn', blocked(e, du > 0 ? -.01 : .01, 0) ? `Décentré : ${EDGE}` : `Décentré : glisse la photo vers la ${du > 0 ? 'gauche' : 'droite'}`] : ['ok', 'Centrage']);
-    items.push(Math.abs(an.tilt) > TARGET.tiltTol ? ['warn', `Tête penchée de ${Math.abs(an.tilt).toFixed(1)}° : Rotate ${an.tilt > 0 ? '−' : '+'}${Math.abs(an.tilt).toFixed(1)}`] : ['ok', 'Bien droit']);
     if (S.lum != null) items.push(S.lum < 85 ? ['warn', 'Visage un peu sombre : Adjust › Brightness +'] : S.lum > 205 ? ['warn', 'Visage surexposé : Adjust › Brightness −'] : ['ok', 'Lumière']);
   }
   const px = Math.round(Math.min(S.src.width, S.src.height) / e.zoom * S.srcK);
