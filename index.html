@@ -502,7 +502,12 @@ function clampOffset(e) { // le cercle doit toujours rester entièrement couvert
   e.ox = -(qx * c - qy * n); e.oy = -(qx * n + qy * c);
 }
 function rotateAround(e, deg) { const t = deg * Math.PI / 180, c = Math.cos(t), n = Math.sin(t), x = e.ox, y = e.oy; e.ox = x * c - y * n; e.oy = x * n + y * c; }
-function setZoom(e, z) { z = clamp(z, 1, ZMAX); const k = z / e.zoom; e.ox *= k; e.oy *= k; e.zoom = z; clampOffset(e); }
+// Zoom centré sur la ligne des yeux quand un visage est détecté (les yeux restent en place), sinon sur le centre du cercle
+function setZoom(e, z) {
+  z = clamp(z, 1, ZMAX); const k = z / e.zoom, an = analyze(e), A = an ? an.mid : { u: .5, v: .5 };
+  e.ox = A.u + (.5 + e.ox - A.u) * k - .5; e.oy = A.v + (.5 + e.oy - A.v) * k - .5;
+  e.zoom = z; clampOffset(e);
+}
 function setAngle(e, a) { a = clamp(a, -45, 45); rotateAround(e, a - e.angle); e.angle = a; clampOffset(e); }
 function rot90(e, dir) { rotateAround(e, dir * 90); e.rot = (e.rot + dir + 4) % 4; clampOffset(e); }
 function flipH(e) { e.fh = !e.fh; e.rot = (4 - e.rot) % 4; e.angle = -e.angle || 0; e.ox = -e.ox; clampOffset(e); }
