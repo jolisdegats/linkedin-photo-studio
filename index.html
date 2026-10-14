@@ -426,8 +426,8 @@ const SRC_MAX = 1600;    // on garde la photo source à 1600 px max (rapide + ti
 const BG = '#a8a8a8';    // gris de la zone hors photo, comme LinkedIn
 
 // Cible de cadrage, en fractions du diamètre du cercle (mesuré sur des photos de profil LinkedIn réussies) :
-// yeux à ~37 % de la hauteur, écart entre les yeux ~16 % du diamètre ≈ tête qui occupe ~60 % du cercle.
-const TARGET = { iod: 0.16, iodMin: 0.125, iodMax: 0.21, eyeV: 0.37, eyeMin: 0.31, eyeMax: 0.43, centerTol: 0.06 };
+// yeux à ~37 % de la hauteur, écart entre les yeux ~14 % du diamètre (visage + cheveux + haut des épaules).
+const TARGET = { iod: 0.14, iodMin: 0.115, iodMax: 0.18, eyeV: 0.37, eyeMin: 0.31, eyeMax: 0.43, centerTol: 0.06 };
 
 const GHOST = 'data:image/svg+xml,' + encodeURIComponent(
   '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><rect width="128" height="128" fill="#dce6f1"/>' +
@@ -679,7 +679,7 @@ function autoFrame(e) {
     e.zoom = clamp(z, 1, ZMAX); e.ox = 0; e.oy = 0;
     const m = toCircle(e, em); e.ox = .5 - m.u; e.oy = TARGET.eyeV - m.v; clampOffset(e);
     const an = analyze(e);
-    return ((an.iod - TARGET.iod) / .03) ** 2 + ((an.mid.v - TARGET.eyeV) / .04) ** 2 + ((an.mid.u - .5) / .04) ** 2;
+    return ((an.iod - TARGET.iod) / .025) ** 2 + ((an.mid.v - TARGET.eyeV) / .04) ** 2 + ((an.mid.u - .5) / .04) ** 2;
   };
   let bestZ = z0, bestCost = place(z0);
   for (let z = z0 * .75; z <= z0 * 1.45; z *= 1.02) { const c = place(z); if (c < bestCost - 1e-9) { bestCost = c; bestZ = z; } }
@@ -746,7 +746,7 @@ function drawOverlays(ctx, an, cx, cy, D) {
   if (S.guides.marks) {
     // ovale cible du visage (front → menton) + petits repères de la hauteur idéale des yeux
     ctx.setLineDash([6 * dpr, 6 * dpr]); ctx.strokeStyle = 'rgba(255,255,255,.8)'; ctx.lineWidth = 1.5 * dpr;
-    ctx.beginPath(); ctx.ellipse(x0 + .5 * D, y0 + (TARGET.eyeV + .045) * D, .155 * D, .215 * D, 0, 0, Math.PI * 2); ctx.stroke();
+    ctx.beginPath(); ctx.ellipse(x0 + .5 * D, y0 + (TARGET.eyeV + .28 * TARGET.iod) * D, .97 * TARGET.iod * D, 1.34 * TARGET.iod * D, 0, 0, Math.PI * 2); ctx.stroke();
     ctx.setLineDash([]); ctx.lineWidth = 2 * dpr; ctx.beginPath();
     const ey = y0 + TARGET.eyeV * D;
     ctx.moveTo(x0 + .06 * D, ey); ctx.lineTo(x0 + .2 * D, ey); ctx.moveTo(x0 + .8 * D, ey); ctx.lineTo(x0 + .94 * D, ey);

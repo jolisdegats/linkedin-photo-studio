@@ -57,5 +57,5 @@ photos de profil réussies :
 | Repère | Cible | Toléré |
 |---|---|---|
 | Hauteur des yeux | 37 % | 31 – 43 % |
-| Écart entre les yeux (≈ tête à 60 % du cercle) | 16 % | 12,5 – 21 % |
+| Écart entre les yeux (visage + cheveux + haut des épaules) | 14 % | 11,5 – 18 % |
 | Centrage horizontal | 50 % | ± 6 % |
