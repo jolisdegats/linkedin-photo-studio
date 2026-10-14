@@ -502,7 +502,8 @@ function clampOffset(e) { // le cercle doit toujours rester entièrement couvert
   e.ox = -(qx * c - qy * n); e.oy = -(qx * n + qy * c);
 }
 function rotateAround(e, deg) { const t = deg * Math.PI / 180, c = Math.cos(t), n = Math.sin(t), x = e.ox, y = e.oy; e.ox = x * c - y * n; e.oy = x * n + y * c; }
-// Zoom centré sur la ligne des yeux quand un visage est détecté (les yeux restent en place), sinon sur le centre du cercle
+// Zoom ancré sur la ligne des yeux quand un visage est détecté (elle reste là où on l'a mise), sinon sur le
+// centre du cercle. Ça n'empêche pas de déplacer la photo librement : l'ancre suit les yeux où qu'ils soient.
 function setZoom(e, z) {
   z = clamp(z, 1, ZMAX); const k = z / e.zoom, an = analyze(e), A = an ? an.mid : { u: .5, v: .5 };
   e.ox = A.u + (.5 + e.ox - A.u) * k - .5; e.oy = A.v + (.5 + e.oy - A.v) * k - .5;
@@ -648,6 +649,7 @@ async function runDetection() {
     const f = await detectFace(S.src);
     if (token !== S.src) return;
     S.face = f; S.faceState = f ? 'found' : 'none';
+    if (f) placeEyesByDefault();
   } catch (err) {
     console.warn('Détection de visage indisponible', err);
     if (token !== S.src) return;
@@ -689,6 +691,15 @@ function autoFrame(e) {
   let bestZ = z0, bestCost = place(z0);
   for (let z = z0 * .75; z <= z0 * 1.45; z *= 1.02) { const c = place(z); if (c < bestCost - 1e-9) { bestCost = c; bestZ = z; } }
   place(bestZ);
+}
+// Position de départ d'une photo fraîchement importée : yeux sur la ligne et visage centré, sans toucher
+// au zoom. Seulement tant que rien n'a été réglé : ensuite on déplace la photo comme on veut.
+function placeEyesByDefault() {
+  const pristine = JSON.stringify(defaultEdit()), f = S.face;
+  const em = { x: (f.e1.x + f.e2.x) / 2, y: (f.e1.y + f.e2.y) / 2 };
+  const place = e => { const m = toCircle(e, em); e.ox += .5 - m.u; e.oy += TARGET.eyeV - m.v; clampOffset(e); };
+  if (S.draft && JSON.stringify(S.draft) === pristine) { place(S.draft); requestRender(); }
+  if (JSON.stringify(S.edit) === pristine) { place(S.edit); commitNew(); store.set('edit', JSON.stringify(S.edit)); paintAvatars(); }
 }
 // vrai si le bord de la photo empêche de la déplacer dans cette direction
 function blocked(e, dx, dy) { const t = { ...e, ox: e.ox + dx, oy: e.oy + dy }; clampOffset(t); return Math.hypot(t.ox - e.ox, t.oy - e.oy) < .002; }
