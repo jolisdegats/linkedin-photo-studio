@@ -1,0 +1,1011 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Studio photo LinkedIn</title>
+<style>
+:root{
+  --blue:#0a66c2; --blue-d:#004182; --blue-tint:rgba(112,181,249,.2);
+  --bg:#f4f2ee; --card:#fff;
+  --t1:rgba(0,0,0,.9); --t2:rgba(0,0,0,.6); --t3:rgba(0,0,0,.75);
+  --line:rgba(140,140,140,.2); --green:#01754f;
+  --font:-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue","Fira Sans",Ubuntu,Oxygen,"Oxygen Sans",Cantarell,"Droid Sans","Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Lucida Grande",Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--t1);font:14px/1.42857 var(--font);-webkit-font-smoothing:antialiased;padding-bottom:120px}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+a{color:inherit;text-decoration:none}
+svg{display:block;flex:none}
+[hidden]{display:none!important}
+[contenteditable]{outline:none;border-radius:2px}
+[contenteditable]:hover{box-shadow:0 0 0 1px rgba(0,0,0,.18)}
+[contenteditable]:focus{box-shadow:0 0 0 2px var(--blue-tint)}
+
+/* ───────── Global nav ───────── */
+.nav{position:sticky;top:0;z-index:20;background:#fff;border-bottom:1px solid rgba(0,0,0,.08)}
+.nav-in{max-width:1128px;margin:0 auto;padding:0 24px;height:52px;display:flex;align-items:center;gap:8px}
+.logo{width:34px;height:34px}
+.search{display:flex;align-items:center;gap:8px;width:280px;height:34px;padding:0 12px 0 14px;border:1px solid rgba(0,0,0,.35);border-radius:999px;color:var(--t2);background:#fff}
+.search input{border:0;outline:0;background:none;font:inherit;font-size:16px;color:var(--t1);width:100%;min-width:0}
+.search input::placeholder{color:var(--t2)}
+.nav-items{margin-left:auto;display:flex;align-items:stretch;height:52px}
+.nav-item{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:80px;padding:0 4px;color:var(--t2);font-size:12px;line-height:16px;position:relative;white-space:nowrap}
+.nav-item:hover{color:var(--t1)}
+.nav-item svg{width:24px;height:24px}
+.nav-item .badge{position:absolute;top:5px;left:calc(50% + 4px);width:12px;height:12px;border-radius:50%;background:#fff;border:3px solid #cb112d}
+.nav-item .lbl{display:flex;align-items:center;gap:1px}
+.nav-item .me-av{width:24px;height:24px;border-radius:50%;object-fit:cover;background:#dce6f1}
+.nav-sep{width:1px;background:rgba(0,0,0,.08);margin:0 4px}
+.nav-item.premium{min-width:110px}
+
+/* ───────── Layout ───────── */
+.layout{max-width:1128px;margin:24px auto 0;padding:0 24px;display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:24px;align-items:start}
+.col{display:flex;flex-direction:column;gap:8px;min-width:0}
+.card{background:var(--card);border-radius:8px;box-shadow:0 0 0 1px var(--line);overflow:hidden;position:relative}
+
+/* ───────── Profile card ───────── */
+.banner{position:relative;aspect-ratio:4/1;background:#a0b5b8}
+.banner svg.art{position:absolute;inset:0;width:100%;height:100%}
+.banner-cam{position:absolute;top:16px;right:16px;width:32px;height:32px;border-radius:50%;background:#fff;display:grid;place-items:center;color:var(--t3);box-shadow:0 0 0 1px rgba(0,0,0,.06)}
+.pbody{position:relative;display:flow-root;padding:0 24px 24px}
+.avatar-btn{display:block;width:160px;height:160px;margin-top:-100px;border-radius:50%;border:4px solid #fff;background:#fff;overflow:hidden;position:relative;cursor:pointer}
+.avatar-btn img{width:100%;height:100%;object-fit:cover;border-radius:50%;display:block;background:#dce6f1}
+.avatar-btn::after{content:"";position:absolute;inset:0;border-radius:50%;transition:background .15s}
+.avatar-btn:hover::after{background:rgba(0,0,0,.08)}
+.pencil{position:absolute;top:24px;right:16px;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;color:var(--t3)}
+.pencil:hover,.x-btn:hover,.icon-btn:hover{background:rgba(0,0,0,.08)}
+.top-row{display:flex;gap:24px;margin-top:28px}
+.identity{flex:1;min-width:0}
+.name-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.name-row h1{margin:0;font-size:24px;line-height:30px;font-weight:600}
+.name-row .shield{color:var(--t3)}
+.headline{font-size:16px;line-height:24px;margin-top:2px}
+.loc{font-size:14px;line-height:20px;color:var(--t2);margin-top:8px}
+.loc a{color:var(--blue);font-weight:600}
+.loc a:hover,.conn:hover,.link:hover{text-decoration:underline}
+.conn{display:inline-block;margin-top:8px;color:var(--blue);font-weight:600;font-size:14px}
+.company{flex:0 0 232px;display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600;line-height:20px;padding-top:2px;align-self:flex-start}
+.company .clogo{width:32px;height:32px;display:grid;place-items:center}
+.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:32px;padding:5px 16px;border-radius:16px;font-size:16px;font-weight:600;line-height:20px;transition:background .15s,box-shadow .15s}
+.btn.primary{background:var(--blue);color:#fff}
+.btn.primary:hover{background:var(--blue-d)}
+.btn.outline{color:var(--blue);box-shadow:inset 0 0 0 1px var(--blue)}
+.btn.outline:hover{background:var(--blue-tint);box-shadow:inset 0 0 0 2px var(--blue)}
+.btn.muted{color:var(--t2);box-shadow:inset 0 0 0 1px rgba(0,0,0,.6)}
+.btn.muted:hover{background:rgba(0,0,0,.08);color:var(--t1);box-shadow:inset 0 0 0 2px rgba(0,0,0,.75)}
+.reco{position:relative;margin-top:24px}
+.reco-view{overflow:hidden}
+.reco-track{display:flex;gap:16px}
+.reco-card{flex:0 0 356px;min-height:104px;border:1px solid rgba(0,0,0,.15);border-radius:8px;padding:16px 48px 16px 16px;position:relative;font-size:16px;line-height:24px}
+.reco-card b{font-weight:600}
+.reco-card .link{display:inline-block;margin-top:4px;color:var(--blue);font-weight:600}
+.reco-card .x{position:absolute;top:10px;right:10px;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;color:var(--t3)}
+.reco-next{position:absolute;right:-12px;top:50%;transform:translateY(-50%);width:36px;height:36px;border-radius:50%;background:#fff;display:grid;place-items:center;box-shadow:0 0 0 1px rgba(0,0,0,.12),0 2px 6px rgba(0,0,0,.18);color:var(--t3)}
+
+/* ───────── Activity ───────── */
+.sec{padding:20px 24px 8px}
+.sec h2{margin:0;font-size:20px;line-height:28px;font-weight:600}
+.sec .sub{color:var(--blue);font-weight:600;font-size:14px}
+.post{display:flex;gap:8px;padding:16px 0 12px}
+.post img{width:48px;height:48px;border-radius:50%;object-fit:cover;flex:none;background:#dce6f1}
+.post .who{font-weight:600;font-size:14px;line-height:20px}
+.post .who span{font-weight:400;color:var(--t2)}
+.post .meta{color:var(--t2);font-size:12px;line-height:16px}
+.post .meta.time{display:flex;align-items:center;gap:4px}
+.post-text{font-size:14px;line-height:20px;padding:0 0 12px}
+.comment{display:flex;align-items:center;gap:8px;border-top:1px solid rgba(0,0,0,.08);padding:12px 0 16px}
+.comment img{width:32px;height:32px;border-radius:50%;object-fit:cover;flex:none;background:#dce6f1}
+.comment .field{flex:1;height:40px;border:1px solid rgba(0,0,0,.35);border-radius:20px;display:flex;align-items:center;padding:0 16px;color:var(--t2)}
+
+/* ───────── Aside ───────── */
+.side .blk{padding:20px 24px}
+.side .blk+.blk{border-top:1px solid rgba(0,0,0,.08);margin:0 24px;padding:16px 0 20px}
+.side h3{margin:0;font-size:20px;line-height:28px;font-weight:600;display:flex;justify-content:space-between;align-items:center}
+.side h3 .icon-btn{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;color:var(--t3)}
+.pills{display:flex;gap:8px;margin-top:12px}
+.pill{padding:5px 14px;border-radius:16px;font-weight:600;font-size:16px;line-height:20px;box-shadow:inset 0 0 0 1px rgba(0,0,0,.6);color:var(--t2)}
+.pill.on{background:var(--green);color:#fff;box-shadow:none}
+.side .url{color:var(--t2);font-size:14px;margin-top:6px;word-break:break-all}
+
+/* ───────── Studio bar (outil) ───────── */
+.studio{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:30;display:flex;align-items:center;gap:4px;padding:6px;background:#1d2226;color:#fff;border-radius:999px;box-shadow:0 10px 30px rgba(0,0,0,.28);max-width:calc(100vw - 24px)}
+.seg{display:flex;background:rgba(255,255,255,.1);border-radius:999px;padding:3px}
+.seg button{padding:7px 14px;border-radius:999px;font-weight:600;color:rgba(255,255,255,.75);white-space:nowrap}
+.seg button[aria-pressed="true"]{background:#fff;color:#1d2226}
+.sbtn{display:flex;align-items:center;gap:6px;padding:9px 14px;border-radius:999px;font-weight:600;white-space:nowrap}
+.sbtn:hover:not(:disabled){background:rgba(255,255,255,.12)}
+.sbtn.primary{background:var(--blue)}
+.sbtn.primary:hover:not(:disabled){background:#378fe9}
+.sbtn:disabled{opacity:.4;cursor:default}
+.sbtn svg{width:16px;height:16px}
+.ssep{width:1px;align-self:stretch;margin:6px 2px;background:rgba(255,255,255,.18)}
+.kbd{font-size:11px;padding:1px 5px;border-radius:4px;background:rgba(255,255,255,.14);color:rgba(255,255,255,.8);font-weight:600}
+.dl{position:relative}
+.menu{position:absolute;right:0;bottom:calc(100% + 10px);background:#fff;color:var(--t1);border-radius:8px;box-shadow:0 0 0 1px rgba(0,0,0,.08),0 8px 24px rgba(0,0,0,.2);padding:6px 0;min-width:260px}
+.menu button{display:block;width:100%;text-align:left;padding:10px 16px}
+.menu button:hover{background:rgba(0,0,0,.06)}
+.menu small{display:block;color:var(--t2);font-size:12px}
+.toast{position:fixed;left:50%;bottom:84px;transform:translateX(-50%) translateY(8px);z-index:60;background:#1d2226;color:#fff;padding:10px 16px;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;width:max-content;max-width:calc(100vw - 32px);display:flex;gap:12px;align-items:center}
+.toast.show{opacity:1;transform:translateX(-50%);pointer-events:auto}
+.toast button{color:#71b7fb;font-weight:600}
+
+/* ───────── Edit image modal ───────── */
+.backdrop{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;padding:16px}
+.modal{background:#fff;border-radius:8px;width:min(1128px,100%);max-height:calc(100vh - 32px);display:flex;flex-direction:column;overflow:hidden;box-shadow:0 0 0 1px rgba(140,140,140,.2),0 8px 30px rgba(0,0,0,.3)}
+.modal-head{display:flex;align-items:center;justify-content:space-between;padding:10px 12px 10px 24px;border-bottom:1px solid rgba(0,0,0,.08)}
+.modal-head h2{margin:0;font-size:20px;line-height:28px;font-weight:400}
+.x-btn{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;color:var(--t2)}
+.modal-body{display:flex;min-height:0}
+.stage{flex:1;min-width:0;position:relative;height:min(440px,56vh);background:#a8a8a8;touch-action:none;cursor:grab;outline:none}
+.stage:focus-visible{box-shadow:inset 0 0 0 2px var(--blue)}
+.stage.dragging{cursor:grabbing}
+.stage canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.panel{flex:0 0 300px;padding:0 24px 24px;overflow:auto}
+.tabs{display:flex;margin:0 -8px}
+.tab{flex:1;padding:16px 4px 12px;font-size:16px;font-weight:600;line-height:20px;color:var(--t2);border-bottom:2px solid transparent;text-align:center}
+.tab:hover{background:rgba(0,0,0,.04);color:var(--t1)}
+.tab[aria-selected="true"]{color:var(--t1);border-bottom-color:var(--t1)}
+.tools{display:flex;gap:20px;margin-top:28px}
+.tool{width:36px;height:36px;border-radius:4px;display:grid;place-items:center;color:var(--t3)}
+.tool:hover{background:rgba(0,0,0,.08);color:var(--t1)}
+.tool svg{width:28px;height:28px}
+.ctl{margin-top:26px}
+.ctl label{display:flex;justify-content:space-between;font-size:16px;line-height:20px;color:var(--t1);margin-bottom:22px}
+.ctl label output{color:var(--t2);font-size:13px;font-variant-numeric:tabular-nums}
+.range{-webkit-appearance:none;appearance:none;width:100%;height:20px;margin:0;background:transparent;cursor:pointer;--p:50%}
+.range:focus{outline:none}
+.range::-webkit-slider-runnable-track{height:4px;border-radius:2px;background:linear-gradient(to right,rgba(0,0,0,.9) var(--p),#e0dfdc var(--p))}
+.range::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:16px;height:16px;border-radius:50%;background:rgba(0,0,0,.9);margin-top:-6px;border:0;transition:transform .1s}
+.range:active::-webkit-slider-thumb{transform:scale(1.15)}
+.range:focus-visible::-webkit-slider-thumb{box-shadow:0 0 0 3px var(--blue-tint)}
+.range::-moz-range-track{height:4px;border-radius:2px;background:#e0dfdc}
+.range::-moz-range-progress{height:4px;border-radius:2px;background:rgba(0,0,0,.9)}
+.range::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:rgba(0,0,0,.9);border:0}
+.fgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px 12px;margin-top:24px}
+.fthumb{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:14px;color:var(--t2);font-weight:600}
+.fthumb img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:4px;background:#eee;box-shadow:0 0 0 1px rgba(0,0,0,.08)}
+.fthumb[aria-pressed="true"]{color:var(--t1)}
+.fthumb[aria-pressed="true"] img{box-shadow:0 0 0 3px var(--blue)}
+.modal-foot{display:flex;align-items:flex-end;gap:16px;padding:12px 24px;border-top:1px solid rgba(0,0,0,.08)}
+.save{background:var(--blue);color:#fff;font-weight:600;font-size:16px;min-height:40px;padding:8px 20px;border-radius:24px;white-space:nowrap}
+.save:hover{background:var(--blue-d)}
+
+/* assistant de cadrage (dans le pied de la modale) */
+.assist{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px}
+.assist-row{display:flex;align-items:center;flex-wrap:wrap;gap:6px 16px;font-size:14px;color:var(--t2)}
+.assist-row label{display:flex;align-items:center;gap:6px;cursor:pointer;user-select:none}
+.assist-row input{accent-color:var(--blue);width:16px;height:16px;margin:0}
+.chip-btn{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:16px;font-weight:600;color:var(--blue);box-shadow:inset 0 0 0 1px var(--blue)}
+.chip-btn:hover:not(:disabled){background:var(--blue-tint)}
+.chip-btn:disabled{opacity:.45;cursor:default}
+.text-btn{font-weight:600;color:var(--t2);padding:4px 6px;border-radius:4px}
+.text-btn:hover{background:rgba(0,0,0,.06);color:var(--t1)}
+.hints{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px}
+.hints li{display:flex;align-items:center;gap:6px;padding:3px 10px;border-radius:999px;font-size:13px;line-height:18px;background:#f0efec;color:var(--t3)}
+.hints li::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor;opacity:.8;flex:none}
+.hints li.ok{background:#e3f1e8;color:#0d6b3c}
+.hints li.warn{background:#fcefdc;color:#8a4b00}
+.hints li.score{background:#1d2226;color:#fff;font-weight:600}
+.hints li.score::before{display:none}
+
+/* ───────── Responsive ───────── */
+@media (max-width:1100px){ .nav-item.premium,.nav-item.biz,.nav-sep{display:none} }
+@media (max-width:960px){
+  .layout{grid-template-columns:minmax(0,1fr)}
+  .nav-item{min-width:64px}
+}
+@media (max-width:760px){
+  .nav-in{padding:0 12px}
+  .search{width:auto;flex:1;min-width:0}
+  .nav-item{min-width:44px}
+  .nav-item .lbl{display:none}
+  .nav-item.hide-sm{display:none}
+  .layout{padding:0;margin-top:0;gap:8px}
+  .card{border-radius:0}
+  .pbody{padding:0 16px 20px}
+  .avatar-btn{width:120px;height:120px;margin-top:-72px}
+  .pencil{top:8px;right:8px}
+  .top-row{flex-direction:column;gap:8px;margin-top:16px}
+  .company{flex:none}
+  .reco-card{flex-basis:280px}
+  .reco-next{right:4px}
+  .sec,.side .blk{padding-left:16px;padding-right:16px}
+  .side .blk+.blk{margin:0 16px}
+  .studio{flex-wrap:nowrap;border-radius:999px}
+  .sbtn{padding:9px 11px}
+  .sbtn .full,.kbd,.ssep,#swapBtn{display:none}
+  .backdrop{padding:0}
+  .modal{max-height:100%;height:100%;border-radius:0}
+  .modal-body{flex-direction:column;overflow:auto;flex:1}
+  .stage{flex:none;height:auto;aspect-ratio:1/1;max-height:56vh}
+  .panel{flex:none;padding:0 16px 16px}
+  .tools{margin-top:16px}
+  .ctl{margin-top:16px}
+  .ctl label{margin-bottom:10px}
+  .modal-foot{flex-direction:column;align-items:stretch;padding:12px 16px}
+  .save{align-self:flex-end}
+}
+</style>
+</head>
+<body>
+
+<!-- ═════════ Nav ═════════ -->
+<header class="nav">
+  <div class="nav-in">
+    <a class="logo" aria-label="LinkedIn">
+      <svg viewBox="0 0 34 34" width="34" height="34"><rect width="34" height="34" rx="4" fill="#0a66c2"/><path fill="#fff" d="M8 13.2h3.9V26H8zM9.95 6.8a2.25 2.25 0 1 1 0 4.5 2.25 2.25 0 0 1 0-4.5zM14.3 13.2H18v1.75h.05c.52-.98 1.79-2 3.68-2 3.94 0 4.67 2.59 4.67 5.96V26h-3.88v-6.18c0-1.47-.03-3.37-2.05-3.37-2.06 0-2.37 1.6-2.37 3.26V26h-3.8z"/></svg>
+    </a>
+    <label class="search">
+      <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor"><path d="M14.56 12.44 11.3 9.18a5.51 5.51 0 1 0-2.12 2.12l3.26 3.26a1.5 1.5 0 1 0 2.12-2.12zM3 6.5A3.5 3.5 0 1 1 6.5 10 3.5 3.5 0 0 1 3 6.5z"/></svg>
+      <input type="text" placeholder="Search" aria-label="Search">
+    </label>
+    <nav class="nav-items">
+      <a class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M23 9v2h-2v7a3 3 0 0 1-3 3h-4v-6h-4v6H6a3 3 0 0 1-3-3v-7H1V9l11-7 5 3.18V2h3v5.09z"/></svg><span class="badge"></span><span class="lbl">Home</span></a>
+      <a class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 16v6H3v-6a3 3 0 0 1 3-3h3a3 3 0 0 1 3 3zm5.5-3A3.5 3.5 0 1 0 14 9.5a3.5 3.5 0 0 0 3.5 3.5zm1 2h-2a2.5 2.5 0 0 0-2.5 2.5V22h7v-4.5a2.5 2.5 0 0 0-2.5-2.5zM7.5 2A4.5 4.5 0 1 0 12 6.5 4.49 4.49 0 0 0 7.5 2z"/></svg><span class="lbl">My Network</span></a>
+      <a class="nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17 6V5a3 3 0 0 0-3-3h-4a3 3 0 0 0-3 3v1H2v4a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3V6zM9 5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1H9zm10 9a4 4 0 0 0 3-1.38V17a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3v-4.38A4 4 0 0 0 5 14z"/></svg><span class="lbl">Jobs</span></a>
+      <a class="nav-item hide-sm"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 4H8a7 7 0 0 0 0 14h4v4l8.16-5.39A6.78 6.78 0 0 0 23 11a7 7 0 0 0-7-7zm-8 8.25A1.25 1.25 0 1 1 9.25 11 1.25 1.25 0 0 1 8 12.25zm4 0A1.25 1.25 0 1 1 13.25 11 1.25 1.25 0 0 1 12 12.25zm4 0A1.25 1.25 0 1 1 17.25 11 1.25 1.25 0 0 1 16 12.25z"/></svg><span class="lbl">Messaging</span></a>
+      <a class="nav-item hide-sm"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M22 19h-8.28a2 2 0 1 1-3.44 0H2v-1a4.52 4.52 0 0 1 1.17-2.83l1-1.17h15.7l1 1.17A4.42 4.42 0 0 1 22 18zM18.21 7.44A6.27 6.27 0 0 0 12 2a6.27 6.27 0 0 0-6.21 5.44L5 13h14z"/></svg><span class="lbl">Notifications</span></a>
+      <a class="nav-item"><img class="me-av js-avatar" alt=""><span class="lbl">Me <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor"><path d="M8 11 3 6h10z"/></svg></span></a>
+      <div class="nav-sep"></div>
+      <a class="nav-item biz"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 3h4v4H3zm7 0h4v4h-4zm7 0h4v4h-4zM3 10h4v4H3zm7 0h4v4h-4zm7 0h4v4h-4zM3 17h4v4H3zm7 0h4v4h-4zm7 0h4v4h-4z"/></svg><span class="lbl">For Business <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor"><path d="M8 11 3 6h10z"/></svg></span></a>
+      <a class="nav-item premium"><svg viewBox="0 0 24 24"><rect x="1" y="1" width="22" height="22" rx="4" fill="#f8c77e"/><path d="M23 5v14a4 4 0 0 1-4 4H5z" fill="#e7a33e"/></svg><span class="lbl">Retry Premium</span></a>
+    </nav>
+  </div>
+</header>
+
+<!-- ═════════ Page ═════════ -->
+<main class="layout">
+  <div class="col">
+    <section class="card profile">
+      <div class="banner">
+        <svg class="art" viewBox="0 0 1000 250" preserveAspectRatio="none" aria-hidden="true">
+          <rect width="1000" height="250" fill="#c3d9dc"/>
+          <rect width="691" height="250" fill="#d5e5e7"/>
+          <path d="M0 0H607Q646 125 607 250H0Z" fill="#a0b5b8"/>
+        </svg>
+        <button class="banner-cam" aria-label="Edit background"><svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor"><path d="M10 9a2 2 0 1 1-2-2 2 2 0 0 1 2 2zm5-2.5V14H1V6.5A2.5 2.5 0 0 1 3.5 4h.75L5 2h6l.75 2h.75A2.5 2.5 0 0 1 15 6.5zM11 9a3 3 0 1 0-3 3 3 3 0 0 0 3-3z"/></svg></button>
+      </div>
+      <div class="pbody">
+        <button class="avatar-btn" id="avatarBtn" aria-label="Modifier la photo de profil"><img class="js-avatar" alt="Photo de profil"></button>
+        <button class="pencil" aria-label="Edit intro"><svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M21.13 2.86a3 3 0 0 0-4.17 0l-13 13L2 22l6.19-2L21.13 7a3 3 0 0 0 0-4.16zM6.77 18.57l-1.35-1.34L16.64 6 18 7.35z"/></svg></button>
+        <div class="top-row">
+          <div class="identity">
+            <div class="name-row">
+              <h1 contenteditable="plaintext-only" spellcheck="false" data-k="name" title="Clique pour modifier">Julie SZWARC</h1>
+              <span aria-hidden="true" style="font-size:20px">👩‍💻</span>
+              <svg class="shield" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M12 2.5 19.5 5v6.2c0 4.6-3.1 8.6-7.5 10.3-4.4-1.7-7.5-5.7-7.5-10.3V5z"/><path d="m8.7 12 2.3 2.3 4.4-4.6" stroke-linecap="round"/></svg>
+            </div>
+            <div class="headline" contenteditable="plaintext-only" data-k="headline" title="Clique pour modifier">Senior Software Engineer at Ai-Way</div>
+            <div class="loc"><span contenteditable="plaintext-only" data-k="location" title="Clique pour modifier">Paris, Île-de-France, France</span> · <a>Contact info</a></div>
+            <a class="conn">500+ connections</a>
+          </div>
+          <div class="company">
+            <span class="clogo"><svg viewBox="0 0 32 32" width="30" height="30" fill="none" stroke="#000" stroke-width="1.6" stroke-linejoin="round"><path d="M16 3 5 26M16 3l11 23M16 9l-7 17M16 9l7 17"/><path d="M8 29h16" stroke-width="1"/></svg></span>
+            <span contenteditable="plaintext-only" data-k="company" title="Clique pour modifier">Ai-Way</span>
+          </div>
+        </div>
+        <div class="actions">
+          <button class="btn primary">Open to</button>
+          <button class="btn outline">Add section</button>
+          <button class="btn outline">Enhance profile</button>
+          <button class="btn muted">Resources</button>
+        </div>
+        <div class="reco">
+          <div class="reco-view"><div class="reco-track">
+            <div class="reco-card"><b>Show recruiters you’re open to work</b> — you control who sees this.<br><a class="link">Get started</a><button class="x" aria-label="Dismiss"><svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M13.42 12 20 18.58 18.58 20 12 13.42 5.42 20 4 18.58 10.58 12 4 5.42 5.42 4 12 10.58 18.58 4 20 5.42z"/></svg></button></div>
+            <div class="reco-card"><b>Share that you’re hiring</b> and attract qualified candidates.<br><a class="link">Get started</a><button class="x" aria-label="Dismiss"><svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M13.42 12 20 18.58 18.58 20 12 13.42 5.42 20 4 18.58 10.58 12 4 5.42 5.42 4 12 10.58 18.58 4 20 5.42z"/></svg></button></div>
+            <div class="reco-card"><b>Showcase services</b> you offer so you and your business can appear in search results.<br><a class="link">Get started</a></div>
+          </div></div>
+          <button class="reco-next" aria-label="Next"><svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M8.6 4.6 16 12l-7.4 7.4-1.4-1.4 6-6-6-6z"/></svg></button>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="sec">
+        <h2>Activity</h2>
+        <a class="sub">512 followers</a>
+        <div class="post">
+          <img class="js-avatar" alt="">
+          <div>
+            <div class="who"><span data-mirror="name" style="font-weight:600;color:var(--t1)">Julie SZWARC</span> <span>• You</span></div>
+            <div class="meta" data-mirror="headline">Senior Software Engineer at Ai-Way</div>
+            <div class="meta time">1d • <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor"><path d="M8 1a7 7 0 1 0 7 7 7 7 0 0 0-7-7zM3 8a5 5 0 0 1 1-3l.55.55A1.5 1.5 0 0 1 5 6.62v1.07a.75.75 0 0 0 .22.53l.56.56a.75.75 0 0 0 .53.22H7v.69a.75.75 0 0 0 .22.53l.56.56a.75.75 0 0 1 .22.53V13a5 5 0 0 1-5-5zm6.24 4.83 2-2.46a.75.75 0 0 0 .09-.8l-.58-1.16A.76.76 0 0 0 10 8H7v-.19a.51.51 0 0 1 .28-.45l.38-.19a.74.74 0 0 1 .68 0L9 7.5l.38-.7a1 1 0 0 0 .12-.48v-.85a.78.78 0 0 1 .21-.53l1.07-1.09a5 5 0 0 1-1.54 9z"/></svg></div>
+          </div>
+        </div>
+        <div class="post-text">Nouvelle photo de profil 👀 — ça vous plaît ?</div>
+        <div class="comment"><img class="js-avatar" alt=""><div class="field">Add a comment…</div></div>
+      </div>
+    </section>
+  </div>
+
+  <aside class="col side">
+    <section class="card">
+      <div class="blk">
+        <h3>Profile language <span class="icon-btn"><svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M21.13 2.86a3 3 0 0 0-4.17 0l-13 13L2 22l6.19-2L21.13 7a3 3 0 0 0 0-4.16zM6.77 18.57l-1.35-1.34L16.64 6 18 7.35z"/></svg></span></h3>
+        <div class="pills"><span class="pill">Français</span><span class="pill on">English</span></div>
+      </div>
+      <div class="blk">
+        <h3>Public profile &amp; URL <span class="icon-btn"><svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M21.13 2.86a3 3 0 0 0-4.17 0l-13 13L2 22l6.19-2L21.13 7a3 3 0 0 0 0-4.16zM6.77 18.57l-1.35-1.34L16.64 6 18 7.35z"/></svg></span></h3>
+        <div class="url" contenteditable="plaintext-only" data-k="url" title="Clique pour modifier">www.linkedin.com/in/julieszwarc</div>
+      </div>
+    </section>
+  </aside>
+</main>
+
+<!-- ═════════ Studio bar ═════════ -->
+<div class="studio" role="toolbar" aria-label="Studio photo">
+  <div class="seg" role="group" aria-label="Photo affichée">
+    <button id="showCurrent" aria-pressed="true">Actuelle</button>
+    <button id="showNew" aria-pressed="false">Nouvelle</button>
+  </div>
+  <button class="sbtn" id="swapBtn" title="Basculer (barre d’espace)"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M11 1.5 14.5 5 11 8.5V6H3V4h8zM5 7.5V10h8v2H5v2.5L1.5 11z"/></svg><span class="kbd">Espace</span></button>
+  <span class="ssep"></span>
+  <button class="sbtn primary" id="uploadNewBtn"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M7 11V4.4L4.7 6.7 3.3 5.3 8 .6l4.7 4.7-1.4 1.4L9 4.4V11zm-5 1h2v1h8v-1h2v3H2z"/></svg><span class="full">Nouvelle photo</span></button>
+  <button class="sbtn" id="editBtn" disabled><svg viewBox="0 0 16 16" fill="currentColor"><path d="M4 0h2v10h10v2h-4v4h-2v-4H4zM0 4h3v2H0zm7 0h5v5h-2V6H7z"/></svg><span class="full">Recadrer</span></button>
+  <div class="dl">
+    <button class="sbtn" id="dlBtn" disabled aria-haspopup="menu" aria-expanded="false"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M7 1h2v6.6l2.3-2.3 1.4 1.4L8 11.4 3.3 6.7l1.4-1.4L7 7.6zM2 12h2v1h8v-1h2v3H2z"/></svg><span class="full">Télécharger</span></button>
+    <div class="menu" id="dlMenu" role="menu" hidden>
+      <button role="menuitem" data-dl="jpg">JPG carré<small>À uploader sur LinkedIn (il découpe le rond lui‑même)</small></button>
+      <button role="menuitem" data-dl="png">PNG rond, fond transparent<small>Pour un CV, une signature mail…</small></button>
+    </div>
+  </div>
+  <span class="ssep"></span>
+  <button class="sbtn" id="uploadCurBtn" title="Importer la photo actuellement sur ton profil, pour comparer"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a3.5 3.5 0 1 1 0 7 3.5 3.5 0 0 1 0-7zM1.5 15c0-3.3 2.9-5.5 6.5-5.5s6.5 2.2 6.5 5.5z"/></svg><span class="full">Photo actuelle…</span></button>
+</div>
+<input type="file" id="fileNew" accept="image/*" hidden>
+<input type="file" id="fileCur" accept="image/*" hidden>
+<div class="toast" id="toast" role="status" aria-live="polite"><span></span><button hidden></button></div>
+
+<!-- ═════════ Edit image modal ═════════ -->
+<div class="backdrop" id="editor" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="editTitle">
+    <div class="modal-head">
+      <h2 id="editTitle">Edit image</h2>
+      <button class="x-btn" id="closeBtn" aria-label="Dismiss"><svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M13.42 12 20 18.58 18.58 20 12 13.42 5.42 20 4 18.58 10.58 12 4 5.42 5.42 4 12 10.58 18.58 4 20 5.42z"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div class="stage" id="stage" tabindex="0" aria-label="Glisse pour déplacer, molette ou pincement pour zoomer"><canvas id="stageCanvas"></canvas></div>
+      <div class="panel">
+        <div class="tabs" role="tablist">
+          <button class="tab" role="tab" data-tab="crop" aria-selected="true">Crop</button>
+          <button class="tab" role="tab" data-tab="filter" aria-selected="false">Filter</button>
+          <button class="tab" role="tab" data-tab="adjust" aria-selected="false">Adjust</button>
+        </div>
+        <div data-pane="crop">
+          <div class="tools">
+            <button class="tool" id="rotL" title="Rotate left" aria-label="Rotate left"><svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M8.2 8.6A8.5 8.5 0 1 1 5.6 16" stroke-dasharray="2.6 3.1"/><path d="M9.5 3.5 7.6 8.9l5.4 1.3"/></svg></button>
+            <button class="tool" id="rotR" title="Rotate right" aria-label="Rotate right"><svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" style="transform:scaleX(-1)"><path d="M8.2 8.6A8.5 8.5 0 1 1 5.6 16" stroke-dasharray="2.6 3.1"/><path d="M9.5 3.5 7.6 8.9l5.4 1.3"/></svg></button>
+            <button class="tool" id="flipH" title="Flip horizontal" aria-label="Flip horizontal"><svg viewBox="0 0 28 28"><path d="M3 6.5 12.5 14 3 21.5z" fill="currentColor"/><path d="M25 6.5 15.5 14 25 21.5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg></button>
+            <button class="tool" id="flipV" title="Flip vertical" aria-label="Flip vertical"><svg viewBox="0 0 28 28"><path d="M5 3h18v2.5L14 13 5 5.5z" fill="currentColor"/><path d="M6 24.5 14 17l8 7.5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M5 25h18" stroke="currentColor" stroke-width="2"/></svg></button>
+          </div>
+          <div class="ctl"><label for="zoom">Zoom <output id="zoomOut"></output></label><input class="range" id="zoom" type="range" min="0" max="100" step="0.1" value="0"></div>
+          <div class="ctl"><label for="rotate">Rotate <output id="rotateOut"></output></label><input class="range" id="rotate" type="range" min="-45" max="45" step="0.1" value="0"></div>
+        </div>
+        <div data-pane="filter" hidden>
+          <div class="fgrid" id="fgrid"></div>
+        </div>
+        <div data-pane="adjust" hidden>
+          <div class="ctl"><label for="adj-brightness">Brightness <output></output></label><input class="range js-adj" id="adj-brightness" data-k="brightness" type="range" min="-100" max="100" step="1" value="0"></div>
+          <div class="ctl"><label for="adj-contrast">Contrast <output></output></label><input class="range js-adj" id="adj-contrast" data-k="contrast" type="range" min="-100" max="100" step="1" value="0"></div>
+          <div class="ctl"><label for="adj-saturation">Saturation <output></output></label><input class="range js-adj" id="adj-saturation" data-k="saturation" type="range" min="-100" max="100" step="1" value="0"></div>
+          <div class="ctl"><label for="adj-vignette">Vignette <output></output></label><input class="range js-adj" id="adj-vignette" data-k="vignette" type="range" min="-100" max="100" step="1" value="0"></div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <div class="assist">
+        <div class="assist-row">
+          <label><input type="checkbox" id="gGrid" checked> Grille</label>
+          <label><input type="checkbox" id="gMarks" checked> Repères visage</label>
+          <button class="chip-btn" id="autoBtn" disabled>✨ Auto-cadrer</button>
+          <button class="text-btn" id="resetBtn">Réinitialiser</button>
+        </div>
+        <ul class="hints" id="hints" aria-live="polite"></ul>
+      </div>
+      <button class="save" id="saveBtn">Save changes</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+'use strict';
+
+/* ════════════ Constantes ════════════ */
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+const clone = o => JSON.parse(JSON.stringify(o));
+
+const ZMAX = 4;          // zoom max (1 = le petit côté de la photo remplit le cercle)
+const SRC_MAX = 1600;    // on garde la photo source à 1600 px max (rapide + tient dans le localStorage)
+const BG = '#a8a8a8';    // gris de la zone hors photo, comme LinkedIn
+
+// Cible de cadrage, en fractions du diamètre du cercle (mesuré sur des photos de profil LinkedIn réussies) :
+// yeux à ~37 % de la hauteur, écart entre les yeux ~16 % du diamètre ≈ tête qui occupe ~60 % du cercle.
+const TARGET = { iod: 0.16, iodMin: 0.125, iodMax: 0.21, eyeV: 0.37, eyeMin: 0.31, eyeMax: 0.43, centerTol: 0.06, tiltTol: 2.5 };
+
+const GHOST = 'data:image/svg+xml,' + encodeURIComponent(
+  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><rect width="128" height="128" fill="#dce6f1"/>' +
+  '<circle cx="64" cy="50" r="22" fill="#9db3c8"/><path d="M22 128c0-27 19-44 42-44s42 17 42 44z" fill="#9db3c8"/></svg>');
+
+// Filtres façon LinkedIn (approximations des rendus Studio, Spotlight, Prime…)
+const PRESETS = {
+  original:  { label: 'Original' },
+  studio:    { label: 'Studio',    brightness: 8,  contrast: 10, saturation: -6, warmth: 4,  vignette: 12 },
+  spotlight: { label: 'Spotlight', brightness: 6,  contrast: 16, saturation: 4,  vignette: 50 },
+  prime:     { label: 'Prime',     brightness: 4,  contrast: 14, saturation: 30, warmth: 6 },
+  classic:   { label: 'Classic',   brightness: 2,  contrast: 18, gray: 1 },
+  edge:      { label: 'Edge',      contrast: 34,   saturation: -28, warmth: -8, vignette: 22 },
+  luminate:  { label: 'Luminate',  brightness: 16, contrast: -6, saturation: 10, warmth: 10, fade: .5 },
+};
+
+const defaultEdit = () => ({ rot: 0, fh: false, fv: false, angle: 0, zoom: 1, ox: 0, oy: 0, filter: 'original',
+  adj: { brightness: 0, contrast: 0, saturation: 0, vignette: 0 } });
+
+const S = {
+  src: null,          // canvas de la nouvelle photo
+  srcK: 1,            // résolution d'origine / résolution de src
+  edit: defaultEdit(),// réglages enregistrés
+  draft: null,        // réglages en cours dans la modale
+  currentURL: null,   // photo actuelle (data URL)
+  newURL: null,       // nouvelle photo rendue (data URL)
+  showing: 'current',
+  face: null, faceState: 'idle', // idle | loading | found | none | error
+  guides: { grid: true, marks: true },
+  lum: null,
+};
+
+/* ════════════ Stockage local (best effort) ════════════ */
+const store = {
+  get(k) { try { return localStorage.getItem('lipp.' + k); } catch { return null; } },
+  set(k, v) { try { v == null ? localStorage.removeItem('lipp.' + k) : localStorage.setItem('lipp.' + k, v); return true; } catch { return false; } },
+};
+
+/* ════════════ Images ════════════ */
+function loadImage(url) {
+  return new Promise((res, rej) => { const img = new Image(); img.onload = () => res(img); img.onerror = () => rej(new Error('image')); img.src = url; });
+}
+async function fileToImage(file) {
+  const url = URL.createObjectURL(file);
+  try { return await loadImage(url); } finally { URL.revokeObjectURL(url); }
+}
+function toCanvas(img, max) {
+  const w = img.naturalWidth || img.width, h = img.naturalHeight || img.height;
+  const k = Math.min(1, max / Math.max(w, h));
+  const c = document.createElement('canvas');
+  c.width = Math.max(1, Math.round(w * k)); c.height = Math.max(1, Math.round(h * k));
+  const x = c.getContext('2d'); x.imageSmoothingQuality = 'high'; x.drawImage(img, 0, 0, c.width, c.height);
+  return c;
+}
+
+/* ════════════ Géométrie ════════════
+   Tout est exprimé en « diamètres du cercle » : ox/oy = décalage du centre de la photo par rapport au
+   centre du cercle ; à zoom 1, le petit côté de la photo = 1 diamètre. Rendu : translate → rotate → flip → scale. */
+const theta = e => (e.rot * 90 + e.angle) * Math.PI / 180;
+const unit = e => e.zoom / Math.min(S.src.width, S.src.height);
+
+function toCircle(e, p) { // point de la photo source → coordonnées dans le cercle (0..1)
+  const w = S.src.width, h = S.src.height, s = unit(e), t = theta(e), c = Math.cos(t), n = Math.sin(t);
+  const x = (p.x - w / 2) * (e.fh ? -1 : 1) * s, y = (p.y - h / 2) * (e.fv ? -1 : 1) * s;
+  return { u: .5 + e.ox + x * c - y * n, v: .5 + e.oy + x * n + y * c };
+}
+function clampOffset(e) { // le cercle doit toujours rester entièrement couvert par la photo
+  const s = unit(e), t = theta(e), c = Math.cos(t), n = Math.sin(t);
+  let qx = -e.ox * c - e.oy * n, qy = e.ox * n - e.oy * c; // centre du cercle dans le repère de la photo
+  const mx = Math.max(0, s * S.src.width / 2 - .5), my = Math.max(0, s * S.src.height / 2 - .5);
+  qx = clamp(qx, -mx, mx); qy = clamp(qy, -my, my);
+  e.ox = -(qx * c - qy * n); e.oy = -(qx * n + qy * c);
+}
+function rotateAround(e, deg) { const t = deg * Math.PI / 180, c = Math.cos(t), n = Math.sin(t), x = e.ox, y = e.oy; e.ox = x * c - y * n; e.oy = x * n + y * c; }
+function setZoom(e, z) { z = clamp(z, 1, ZMAX); const k = z / e.zoom; e.ox *= k; e.oy *= k; e.zoom = z; clampOffset(e); }
+function setAngle(e, a) { a = clamp(a, -45, 45); rotateAround(e, a - e.angle); e.angle = a; clampOffset(e); }
+function rot90(e, dir) { rotateAround(e, dir * 90); e.rot = (e.rot + dir + 4) % 4; clampOffset(e); }
+function flipH(e) { e.fh = !e.fh; e.rot = (4 - e.rot) % 4; e.angle = -e.angle || 0; e.ox = -e.ox; clampOffset(e); }
+function flipV(e) { e.fv = !e.fv; e.rot = (4 - e.rot) % 4; e.angle = -e.angle || 0; e.oy = -e.oy; clampOffset(e); }
+
+function drawGeom(ctx, e, cx, cy, D) {
+  const w = S.src.width, h = S.src.height, s = unit(e) * D;
+  ctx.save();
+  ctx.translate(cx + e.ox * D, cy + e.oy * D);
+  ctx.rotate(theta(e));
+  ctx.scale((e.fh ? -1 : 1) * s, (e.fv ? -1 : 1) * s);
+  ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
+  ctx.drawImage(S.src, -w / 2, -h / 2);
+  ctx.restore();
+}
+
+/* ════════════ Couleur (filtres + Adjust) ════════════ */
+function effective(e) {
+  const p = PRESETS[e.filter] || {}, a = e.adj;
+  const sum = k => clamp((p[k] || 0) + (a[k] || 0), -100, 100);
+  return { brightness: sum('brightness'), contrast: sum('contrast'), saturation: sum('saturation'), vignette: sum('vignette'),
+    warmth: p.warmth || 0, gray: p.gray || 0, fade: p.fade || 0 };
+}
+const isNeutral = p => !p.brightness && !p.contrast && !p.saturation && !p.vignette && !p.warmth && !p.gray && !p.fade;
+
+function applyColor(id, cx, cy, R, p) {
+  const d = id.data, W = id.width, H = id.height;
+  const C = p.contrast * 1.28, cf = (259 * (C + 255)) / (255 * (259 - C));
+  const br = p.brightness * .8, warm = p.warmth * .35, lift = p.fade * 40;
+  const lr = new Uint8ClampedArray(256), lg = new Uint8ClampedArray(256), lb = new Uint8ClampedArray(256);
+  for (let v = 0; v < 256; v++) {
+    const x = cf * (v + br - 128) + 128;
+    const f = y => lift + y * (1 - lift / 255);
+    lr[v] = f(x + warm); lg[v] = f(x + warm * .15); lb[v] = f(x - warm);
+  }
+  const sat = (1 + p.saturation / 100) * (1 - p.gray), doSat = sat !== 1, vig = p.vignette / 100;
+  for (let y = 0; y < H; y++) {
+    const dy = (y - cy) / R, dy2 = dy * dy;
+    for (let x = 0, i = y * W * 4; x < W; x++, i += 4) {
+      if (d[i + 3] === 0) continue;
+      let r = lr[d[i]], g = lg[d[i + 1]], b = lb[d[i + 2]];
+      if (doSat) { const l = .2126 * r + .7152 * g + .0722 * b; r = l + (r - l) * sat; g = l + (g - l) * sat; b = l + (b - l) * sat; }
+      if (vig) {
+        const dx = (x - cx) / R; let t = (Math.sqrt(dx * dx + dy2) - .45) / .75;
+        if (t > 0) {
+          if (t > 1) t = 1; t = t * t * (3 - 2 * t);
+          if (vig > 0) { const k = 1 - vig * .8 * t; r *= k; g *= k; b *= k; }
+          else { const k = -vig * .8 * t; r += (255 - r) * k; g += (255 - g) * k; b += (255 - b) * k; }
+        }
+      }
+      d[i] = r; d[i + 1] = g; d[i + 2] = b;
+    }
+  }
+}
+
+/* rendu final carré (ou rond) en N×N */
+function renderOutput(e, N, round) {
+  const c = document.createElement('canvas'); c.width = c.height = N;
+  const ctx = c.getContext('2d', { willReadFrequently: true });
+  drawGeom(ctx, e, N / 2, N / 2, N);
+  const p = effective(e);
+  if (!isNeutral(p)) { const id = ctx.getImageData(0, 0, N, N); applyColor(id, N / 2, N / 2, N / 2, p); ctx.putImageData(id, 0, 0); }
+  if (round) {
+    ctx.globalCompositeOperation = 'destination-in';
+    ctx.beginPath(); ctx.arc(N / 2, N / 2, N / 2, 0, Math.PI * 2); ctx.fill();
+  } else {
+    ctx.globalCompositeOperation = 'destination-over'; ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, N, N);
+  }
+  return c;
+}
+const exportSize = e => clamp(Math.round(Math.min(S.src.width, S.src.height) / e.zoom), 400, 1200);
+
+/* ════════════ Détection de visage (MediaPipe, chargé à la demande) ════════════ */
+const MP = 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14';
+const MODEL = 'https://storage.googleapis.com/mediapipe-models/face_detector/blaze_face_short_range/float16/1/blaze_face_short_range.tflite';
+let detectorP = null;
+function getDetector() {
+  if (!detectorP) {
+    detectorP = (async () => {
+      const vision = await import(MP + '/vision_bundle.mjs');
+      const files = await vision.FilesetResolver.forVisionTasks(MP + '/wasm');
+      return vision.FaceDetector.createFromOptions(files, {
+        baseOptions: { modelAssetPath: MODEL, delegate: 'CPU' }, runningMode: 'IMAGE', minDetectionConfidence: .5 });
+    })();
+    detectorP.catch(() => { detectorP = null; });
+  }
+  return detectorP;
+}
+function detectIn(det, src) { // meilleur visage dans un canvas → points clés en pixels de ce canvas
+  const W = src.width, H = src.height, m = Math.min(W, H);
+  // Le modèle « short range » préfère les visages assez grands : on essaie la photo entière puis des recadrages.
+  const crops = [[0, 0, W, H], [(W - m) / 2, (H - m) / 2, m, m], [(W - m * .6) / 2, (H - m * .6) * .3, m * .6, m * .6]];
+  for (const [x0, y0, cw, ch] of crops) {
+    const k = Math.min(1, 640 / Math.max(cw, ch));
+    const c = document.createElement('canvas'); c.width = Math.round(cw * k); c.height = Math.round(ch * k);
+    c.getContext('2d').drawImage(src, x0, y0, cw, ch, 0, 0, c.width, c.height);
+    let best = null, bestScore = 0;
+    for (const d of det.detect(c).detections || []) {
+      const kp = d.keypoints || [];
+      if (kp.length < 4) continue;
+      const score = (d.categories?.[0]?.score || 0) * (d.boundingBox ? d.boundingBox.width * d.boundingBox.height : 1);
+      if (score > bestScore) { bestScore = score; best = kp; }
+    }
+    if (best) {
+      const P = i => ({ x: x0 + best[i].x * cw, y: y0 + best[i].y * ch });
+      return { e1: P(0), e2: P(1), nose: P(2), mouth: P(3) };
+    }
+  }
+  return null;
+}
+async function detectFace(src) {
+  const det = await getDetector();
+  const W = src.width, H = src.height;
+  // Le détecteur se trompe sur un visage couché : on essaie les 4 orientations et on garde
+  // la première où le visage est bien debout (yeux au-dessus de la bouche, à ±35° près).
+  const back = [p => p, p => ({ x: p.y, y: H - p.x }), p => ({ x: W - p.x, y: H - p.y }), p => ({ x: W - p.y, y: p.x })];
+  let fallback = null;
+  for (const r of [0, 1, 3, 2]) {
+    const c = document.createElement('canvas');
+    c.width = r % 2 ? H : W; c.height = r % 2 ? W : H;
+    const x = c.getContext('2d');
+    x.translate(c.width / 2, c.height / 2); x.rotate(r * Math.PI / 2); x.drawImage(src, -W / 2, -H / 2);
+    const f = detectIn(det, c);
+    if (!f) continue;
+    const up = Math.atan2((f.e1.y + f.e2.y) / 2 - f.mouth.y, (f.e1.x + f.e2.x) / 2 - f.mouth.x) * 180 / Math.PI;
+    const g = { e1: back[r](f.e1), e2: back[r](f.e2), nose: back[r](f.nose), mouth: back[r](f.mouth) };
+    if (Math.abs(up + 90) <= 35) return g;
+    fallback = fallback || g;
+  }
+  return fallback;
+}
+async function runDetection() {
+  const token = S.src;
+  S.face = null; S.faceState = 'loading'; refreshAssist();
+  try {
+    const f = await detectFace(S.src);
+    if (token !== S.src) return;
+    S.face = f; S.faceState = f ? 'found' : 'none';
+  } catch (err) {
+    console.warn('Détection de visage indisponible', err);
+    if (token !== S.src) return;
+    S.faceState = 'error';
+  }
+  refreshAssist(); requestRender();
+}
+
+function analyze(e) {
+  if (!S.face || !S.src) return null;
+  const a = toCircle(e, S.face.e1), b = toCircle(e, S.face.e2);
+  const mid = { u: (a.u + b.u) / 2, v: (a.v + b.v) / 2 };
+  const iod = Math.hypot(b.u - a.u, b.v - a.v);
+  let tilt = Math.atan2(b.v - a.v, b.u - a.u) * 180 / Math.PI;
+  if (tilt > 90) tilt -= 180; else if (tilt <= -90) tilt += 180;
+  return { a, b, mid, iod, tilt,
+    sizeOk: iod >= TARGET.iodMin && iod <= TARGET.iodMax,
+    eyeOk: mid.v >= TARGET.eyeMin && mid.v <= TARGET.eyeMax,
+    centerOk: Math.abs(mid.u - .5) <= TARGET.centerTol,
+    tiltOk: Math.abs(tilt) <= TARGET.tiltTol };
+}
+
+function autoFrame(e) {
+  const f = S.face; if (!f) return;
+  const fx = e.fh ? -1 : 1, fy = e.fv ? -1 : 1;
+  const em = { x: (f.e1.x + f.e2.x) / 2, y: (f.e1.y + f.e2.y) / 2 };
+  // « haut » de la tête = de la bouche vers les yeux → doit pointer vers le haut de l'écran
+  const thUp = -Math.PI / 2 - Math.atan2((em.y - f.mouth.y) * fy, (em.x - f.mouth.x) * fx);
+  // ligne des yeux parfaitement horizontale, avec le sens donné par thUp
+  const phi = Math.atan2((f.e2.y - f.e1.y) * fy, (f.e2.x - f.e1.x) * fx);
+  let best = thUp, bd = Infinity;
+  for (let k = -3; k <= 3; k++) {
+    const t = -phi + k * Math.PI, dd = Math.abs(Math.atan2(Math.sin(t - thUp), Math.cos(t - thUp)));
+    if (dd < bd) { bd = dd; best = t; }
+  }
+  const deg = best * 180 / Math.PI, r = Math.round(deg / 90);
+  e.rot = ((r % 4) + 4) % 4; e.angle = Math.round((deg - r * 90) * 10) / 10;
+  const iodSrc = Math.hypot(f.e2.x - f.e1.x, f.e2.y - f.e1.y);
+  // Zoom idéal d'après l'écart entre les yeux ; mais si la photo manque de marge (tête collée au bord),
+  // on cherche autour le meilleur compromis taille / hauteur des yeux / centrage.
+  const z0 = TARGET.iod * Math.min(S.src.width, S.src.height) / iodSrc;
+  const place = z => {
+    e.zoom = clamp(z, 1, ZMAX); e.ox = 0; e.oy = 0;
+    const m = toCircle(e, em); e.ox = .5 - m.u; e.oy = TARGET.eyeV - m.v; clampOffset(e);
+    const an = analyze(e);
+    return ((an.iod - TARGET.iod) / .03) ** 2 + ((an.mid.v - TARGET.eyeV) / .04) ** 2 + ((an.mid.u - .5) / .04) ** 2;
+  };
+  let bestZ = z0, bestCost = place(z0);
+  for (let z = z0 * .75; z <= z0 * 1.45; z *= 1.02) { const c = place(z); if (c < bestCost - 1e-9) { bestCost = c; bestZ = z; } }
+  place(bestZ);
+}
+// vrai si le bord de la photo empêche de la déplacer dans cette direction
+function blocked(e, dx, dy) { const t = { ...e, ox: e.ox + dx, oy: e.oy + dy }; clampOffset(t); return Math.hypot(t.ox - e.ox, t.oy - e.oy) < .002; }
+
+/* ════════════ Avatars de la page ════════════ */
+function paintAvatars() {
+  const url = (S.showing === 'new' ? S.newURL : S.currentURL) || GHOST;
+  for (const img of $$('.js-avatar')) if (img.getAttribute('src') !== url) img.src = url;
+  $('#showCurrent').setAttribute('aria-pressed', S.showing === 'current');
+  $('#showNew').setAttribute('aria-pressed', S.showing === 'new');
+  $('#editBtn').disabled = !S.src;
+  $('#dlBtn').disabled = !S.src;
+}
+function setShowing(v) { S.showing = v; store.set('showing', v); paintAvatars(); }
+function commitNew() { S.newURL = renderOutput(S.edit, 400, false).toDataURL('image/jpeg', .92); }
+
+/* ════════════ Modale ════════════ */
+const editor = $('#editor'), stage = $('#stage'), cv = $('#stageCanvas');
+const sctx = cv.getContext('2d', { willReadFrequently: true });
+let dpr = 1, raf = 0, lastFocus = null;
+
+function stageGeom() { const cw = cv.width, ch = cv.height; return { cw, ch, cx: cw / 2, cy: ch / 2, D: Math.min(cw, ch) - 4 * dpr }; }
+function requestRender() { if (!raf) raf = requestAnimationFrame(() => { raf = 0; renderStage(); refreshAssist(); }); }
+
+function renderStage() {
+  if (!S.src || !S.draft || editor.hidden || !cv.width) return;
+  const e = S.draft, { cw, ch, cx, cy, D } = stageGeom(), ctx = sctx;
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.globalCompositeOperation = 'source-over';
+  ctx.clearRect(0, 0, cw, ch);
+  drawGeom(ctx, e, cx, cy, D);
+  const p = effective(e);
+  if (!isNeutral(p)) { const id = ctx.getImageData(0, 0, cw, ch); applyColor(id, cx, cy, D / 2, p); ctx.putImageData(id, 0, 0); }
+  const an = analyze(e);
+  S.lum = an ? measureLight(ctx, an, cx, cy, D) : null;
+  ctx.globalCompositeOperation = 'destination-over'; ctx.fillStyle = BG; ctx.fillRect(0, 0, cw, ch);
+  ctx.globalCompositeOperation = 'source-over';
+  drawOverlays(ctx, an, cx, cy, D);
+}
+
+function measureLight(ctx, an, cx, cy, D) { // luminosité moyenne du visage (zone yeux → bouche)
+  const sz = an.iod * 1.4 * D, x0 = cx - D / 2, y0 = cy - D / 2;
+  const x = Math.round(clamp(x0 + an.mid.u * D - sz / 2, 0, cv.width - 1)), y = Math.round(clamp(y0 + (an.mid.v + an.iod * .5) * D - sz / 2, 0, cv.height - 1));
+  const w = Math.round(Math.min(sz, cv.width - x)), h = Math.round(Math.min(sz, cv.height - y));
+  if (w < 4 || h < 4) return null;
+  const d = ctx.getImageData(x, y, w, h).data; let s = 0, n = 0;
+  for (let i = 0; i < d.length; i += 16) { if (d[i + 3]) { s += .2126 * d[i] + .7152 * d[i + 1] + .0722 * d[i + 2]; n++; } }
+  return n ? s / n : null;
+}
+
+function drawOverlays(ctx, an, cx, cy, D) {
+  const r = D / 2, x0 = cx - r, y0 = cy - r;
+  ctx.save();
+  ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.clip();
+  if (S.guides.grid) {
+    ctx.strokeStyle = 'rgba(255,255,255,.65)'; ctx.lineWidth = dpr; ctx.beginPath();
+    for (const k of [1 / 3, 2 / 3]) { ctx.moveTo(x0 + k * D, y0); ctx.lineTo(x0 + k * D, y0 + D); ctx.moveTo(x0, y0 + k * D); ctx.lineTo(x0 + D, y0 + k * D); }
+    ctx.stroke();
+  }
+  if (S.guides.marks) {
+    // ovale cible de la tête + petits repères de la hauteur idéale des yeux
+    ctx.setLineDash([6 * dpr, 6 * dpr]); ctx.strokeStyle = 'rgba(255,255,255,.8)'; ctx.lineWidth = 1.5 * dpr;
+    ctx.beginPath(); ctx.ellipse(x0 + .5 * D, y0 + (TARGET.eyeV + .02) * D, .2 * D, .29 * D, 0, 0, Math.PI * 2); ctx.stroke();
+    ctx.setLineDash([]); ctx.lineWidth = 2 * dpr; ctx.beginPath();
+    const ey = y0 + TARGET.eyeV * D;
+    ctx.moveTo(x0 + .06 * D, ey); ctx.lineTo(x0 + .2 * D, ey); ctx.moveTo(x0 + .8 * D, ey); ctx.lineTo(x0 + .94 * D, ey);
+    ctx.stroke();
+  }
+  if (an) {
+    // ligne des yeux détectée : verte si bien placée et droite, rouge sinon
+    const good = an.eyeOk && an.tiltOk;
+    const ax = x0 + an.a.u * D, ay = y0 + an.a.v * D, bx = x0 + an.b.u * D, by = y0 + an.b.v * D;
+    const len = Math.hypot(bx - ax, by - ay) || 1, ux = (bx - ax) / len, uy = (by - ay) / len, ext = len * .75;
+    ctx.setLineDash([10 * dpr, 6 * dpr]); ctx.lineWidth = 2.5 * dpr;
+    ctx.strokeStyle = good ? '#3ddc84' : '#ff4d4f';
+    ctx.beginPath(); ctx.moveTo(ax - ux * ext, ay - uy * ext); ctx.lineTo(bx + ux * ext, by + uy * ext); ctx.stroke();
+  }
+  ctx.restore();
+  ctx.setLineDash([]); ctx.strokeStyle = '#fff'; ctx.lineWidth = 2 * dpr;
+  ctx.beginPath(); ctx.arc(cx, cy, r - dpr, 0, Math.PI * 2); ctx.stroke();
+}
+
+function sizeCanvas() {
+  const r = stage.getBoundingClientRect(); dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const w = Math.round(r.width * dpr), h = Math.round(r.height * dpr);
+  if (w && h && (cv.width !== w || cv.height !== h)) { cv.width = w; cv.height = h; }
+  renderStage();
+}
+new ResizeObserver(sizeCanvas).observe(stage);
+
+/* ── Assistant : conseils en direct ── */
+let lastHints = '';
+function refreshAssist() {
+  $('#autoBtn').disabled = !S.face;
+  if (editor.hidden || !S.draft) return;
+  const items = [], e = S.draft, an = analyze(e);
+  if (S.faceState === 'loading') items.push(['info', 'Analyse du visage…']);
+  else if (S.faceState === 'none') items.push(['info', 'Visage non détecté : place tes yeux sur les repères et ta tête dans l’ovale']);
+  else if (S.faceState === 'error') items.push(['info', 'Détection auto indisponible (hors ligne ?) : utilise la grille et l’ovale']);
+  if (an) {
+    items.push(an.iod < TARGET.iodMin ? ['warn', 'Visage trop petit : zoome'] : an.iod > TARGET.iodMax ? ['warn', 'Trop serré : dézoome'] : ['ok', 'Taille du visage']);
+    const EDGE = 'bord de la photo atteint, zoome un peu pour avoir de la marge';
+    items.push(an.mid.v > TARGET.eyeMax ? ['warn', blocked(e, 0, -.01) ? `Yeux trop bas : ${EDGE}` : 'Yeux trop bas : glisse la photo vers le haut']
+      : an.mid.v < TARGET.eyeMin ? ['warn', blocked(e, 0, .01) ? `Yeux trop hauts : ${EDGE}` : 'Yeux trop hauts : glisse la photo vers le bas']
+      : ['ok', 'Hauteur des yeux']);
+    const du = an.mid.u - .5;
+    items.push(Math.abs(du) > TARGET.centerTol ? ['warn', blocked(e, du > 0 ? -.01 : .01, 0) ? `Décentré : ${EDGE}` : `Décentré : glisse la photo vers la ${du > 0 ? 'gauche' : 'droite'}`] : ['ok', 'Centrage']);
+    items.push(Math.abs(an.tilt) > TARGET.tiltTol ? ['warn', `Tête penchée de ${Math.abs(an.tilt).toFixed(1)}° : Rotate ${an.tilt > 0 ? '−' : '+'}${Math.abs(an.tilt).toFixed(1)}`] : ['ok', 'Bien droit']);
+    if (S.lum != null) items.push(S.lum < 85 ? ['warn', 'Visage un peu sombre : Adjust › Brightness +'] : S.lum > 205 ? ['warn', 'Visage surexposé : Adjust › Brightness −'] : ['ok', 'Lumière']);
+  }
+  const px = Math.round(Math.min(S.src.width, S.src.height) / e.zoom * S.srcK);
+  if (px < 400) items.push(['warn', `Résolution faible (${px} px) : LinkedIn recommande au moins 400 px`]);
+  const ok = items.filter(i => i[0] === 'ok').length, tot = items.filter(i => i[0] !== 'info').length;
+  if (an) items.unshift(['score', `Cadrage ${ok}/${tot}`]);
+  const html = items.map(([k, t]) => `<li class="${k}">${t}</li>`).join('');
+  if (html !== lastHints) { $('#hints').innerHTML = html; lastHints = html; }
+}
+
+/* ── Contrôles ── */
+const zoomEl = $('#zoom'), rotEl = $('#rotate');
+function setRange(el, v) { el.value = v; el.style.setProperty('--p', ((el.value - el.min) / (el.max - el.min) * 100) + '%'); }
+function syncControls() {
+  const e = S.draft;
+  setRange(zoomEl, Math.log(e.zoom) / Math.log(ZMAX) * 100); $('#zoomOut').textContent = Math.round(e.zoom * 100) + ' %';
+  setRange(rotEl, e.angle); $('#rotateOut').textContent = (Math.round(e.angle * 10) / 10) + '°';
+  for (const el of $$('.js-adj')) { setRange(el, e.adj[el.dataset.k]); el.previousElementSibling.querySelector('output').textContent = e.adj[el.dataset.k] > 0 ? '+' + e.adj[el.dataset.k] : e.adj[el.dataset.k]; }
+  for (const b of $$('.fthumb')) b.setAttribute('aria-pressed', b.dataset.f === e.filter);
+}
+function changed() { syncControls(); requestRender(); }
+
+zoomEl.addEventListener('input', () => { setZoom(S.draft, Math.pow(ZMAX, zoomEl.value / 100)); changed(); });
+rotEl.addEventListener('input', () => { setAngle(S.draft, +rotEl.value); changed(); });
+for (const el of $$('.js-adj')) el.addEventListener('input', () => { S.draft.adj[el.dataset.k] = +el.value; changed(); });
+$('#rotL').onclick = () => { rot90(S.draft, -1); changed(); };
+$('#rotR').onclick = () => { rot90(S.draft, 1); changed(); };
+$('#flipH').onclick = () => { flipH(S.draft); changed(); };
+$('#flipV').onclick = () => { flipV(S.draft); changed(); };
+$('#autoBtn').onclick = () => { autoFrame(S.draft); changed(); };
+$('#resetBtn').onclick = () => { S.draft = defaultEdit(); changed(); if (currentTab === 'filter') renderThumbs(); };
+$('#gGrid').onchange = ev => { S.guides.grid = ev.target.checked; store.set('guides', JSON.stringify(S.guides)); requestRender(); };
+$('#gMarks').onchange = ev => { S.guides.marks = ev.target.checked; store.set('guides', JSON.stringify(S.guides)); requestRender(); };
+
+// Onglets
+let currentTab = 'crop';
+function selectTab(t) {
+  currentTab = t;
+  for (const b of $$('.tab')) b.setAttribute('aria-selected', b.dataset.tab === t);
+  for (const p of $$('[data-pane]')) p.hidden = p.dataset.pane !== t;
+  if (t === 'filter') renderThumbs();
+}
+for (const b of $$('.tab')) b.onclick = () => selectTab(b.dataset.tab);
+
+// Filtres
+const fgrid = $('#fgrid');
+for (const [k, p] of Object.entries(PRESETS)) {
+  const b = document.createElement('button'); b.className = 'fthumb'; b.dataset.f = k;
+  b.innerHTML = `<img alt=""><span>${p.label}</span>`;
+  b.onclick = () => { S.draft.filter = k; changed(); };
+  fgrid.append(b);
+}
+function renderThumbs() {
+  if (!S.src || !S.draft) return;
+  for (const b of $$('.fthumb')) b.querySelector('img').src = renderOutput({ ...clone(S.draft), filter: b.dataset.f }, 160, false).toDataURL('image/jpeg', .85);
+}
+
+// Glisser / pincer / molette
+const ptrs = new Map(); let pinch = null;
+const pinchDist = () => { const [a, b] = [...ptrs.values()]; return Math.hypot(a.x - b.x, a.y - b.y); };
+cv.addEventListener('pointerdown', ev => {
+  if (!S.draft) return;
+  cv.setPointerCapture(ev.pointerId); ptrs.set(ev.pointerId, { x: ev.clientX, y: ev.clientY }); stage.classList.add('dragging');
+  if (ptrs.size === 2) pinch = { d: pinchDist(), z: S.draft.zoom };
+});
+cv.addEventListener('pointermove', ev => {
+  const prev = ptrs.get(ev.pointerId); if (!prev) return;
+  const cur = { x: ev.clientX, y: ev.clientY }; ptrs.set(ev.pointerId, cur);
+  const e = S.draft, D = stageGeom().D / dpr, k = ptrs.size > 1 ? 2 : 1;
+  e.ox += (cur.x - prev.x) / D / k; e.oy += (cur.y - prev.y) / D / k;
+  if (pinch && ptrs.size === 2) setZoom(e, pinch.z * pinchDist() / pinch.d); else clampOffset(e);
+  changed();
+});
+const endPtr = ev => { ptrs.delete(ev.pointerId); if (ptrs.size < 2) pinch = null; if (!ptrs.size) stage.classList.remove('dragging'); };
+cv.addEventListener('pointerup', endPtr); cv.addEventListener('pointercancel', endPtr);
+cv.addEventListener('wheel', ev => { ev.preventDefault(); setZoom(S.draft, S.draft.zoom * Math.exp(-ev.deltaY * .0015)); changed(); }, { passive: false });
+stage.addEventListener('keydown', ev => {
+  const e = S.draft, st = ev.shiftKey ? .03 : .006, mv = { ArrowLeft: [-st, 0], ArrowRight: [st, 0], ArrowUp: [0, -st], ArrowDown: [0, st] }[ev.key];
+  if (mv) { e.ox += mv[0]; e.oy += mv[1]; clampOffset(e); }
+  else if (ev.key === '+' || ev.key === '=') setZoom(e, e.zoom * 1.05);
+  else if (ev.key === '-') setZoom(e, e.zoom / 1.05);
+  else return;
+  ev.preventDefault(); changed();
+});
+
+function openEditor() {
+  if (!S.src) { $('#fileNew').click(); return; }
+  S.draft = clone(S.edit); lastFocus = document.activeElement;
+  editor.hidden = false; document.body.style.overflow = 'hidden';
+  selectTab('crop'); syncControls(); sizeCanvas(); lastHints = ''; refreshAssist();
+  if (S.faceState === 'idle' || S.faceState === 'error') runDetection();
+  $('#closeBtn').focus();
+}
+function closeEditor() {
+  editor.hidden = true; S.draft = null; document.body.style.overflow = '';
+  if (lastFocus && lastFocus.focus) lastFocus.focus();
+}
+$('#closeBtn').onclick = closeEditor;
+editor.addEventListener('pointerdown', ev => { if (ev.target === editor) closeEditor(); });
+$('#saveBtn').onclick = () => {
+  S.edit = S.draft; commitNew();
+  store.set('edit', JSON.stringify(S.edit));
+  closeEditor(); setShowing('new');
+  toast('Photo enregistrée. Appuie sur Espace pour comparer avec l’actuelle.', 'Télécharger', () => download('jpg'));
+};
+
+/* ════════════ Imports / export ════════════ */
+async function onNewFile(file) {
+  try {
+    const img = await fileToImage(file);
+    const c = toCanvas(img, SRC_MAX);
+    S.srcK = Math.min(img.naturalWidth, img.naturalHeight) / Math.min(c.width, c.height);
+    S.src = c; S.edit = defaultEdit(); S.face = null; S.faceState = 'idle';
+    commitNew(); setShowing('new');
+    if (!store.set('src', c.toDataURL('image/jpeg', .9))) store.set('src', null);
+    store.set('srcK', String(S.srcK)); store.set('edit', JSON.stringify(S.edit));
+    openEditor();
+  } catch {
+    toast('Impossible de lire cette image. Essaie un JPG ou un PNG (le HEIC de l’iPhone n’est pas lu par tous les navigateurs).');
+  }
+}
+async function onCurrentFile(file) {
+  try {
+    const c = toCanvas(await fileToImage(file), 800);
+    S.currentURL = c.toDataURL('image/jpeg', .9);
+    if (!store.set('current', S.currentURL)) store.set('current', null);
+    setShowing('current');
+    toast('Photo actuelle importée. Espace pour basculer avec la nouvelle.');
+  } catch { toast('Impossible de lire cette image.'); }
+}
+async function download(kind) {
+  if (!S.src) return;
+  const N = exportSize(S.edit), round = kind === 'png';
+  const c = renderOutput(S.edit, N, round);
+  const blob = await new Promise(r => c.toBlob(r, round ? 'image/png' : 'image/jpeg', .92));
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = `photo-linkedin-${N}px.${round ? 'png' : 'jpg'}`;
+  document.body.append(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+}
+
+$('#fileNew').onchange = ev => { const f = ev.target.files[0]; ev.target.value = ''; if (f) onNewFile(f); };
+$('#fileCur').onchange = ev => { const f = ev.target.files[0]; ev.target.value = ''; if (f) onCurrentFile(f); };
+$('#uploadNewBtn').onclick = () => $('#fileNew').click();
+$('#uploadCurBtn').onclick = () => $('#fileCur').click();
+$('#editBtn').onclick = openEditor;
+$('#avatarBtn').onclick = openEditor;
+$('#showCurrent').onclick = () => setShowing('current');
+$('#showNew').onclick = () => setShowing('new');
+$('#swapBtn').onclick = () => setShowing(S.showing === 'new' ? 'current' : 'new');
+
+const dlBtn = $('#dlBtn'), dlMenu = $('#dlMenu');
+dlBtn.onclick = ev => { ev.stopPropagation(); dlMenu.hidden = !dlMenu.hidden; dlBtn.setAttribute('aria-expanded', !dlMenu.hidden); };
+for (const b of $$('[data-dl]')) b.onclick = () => { dlMenu.hidden = true; download(b.dataset.dl); };
+document.addEventListener('click', () => { if (!dlMenu.hidden) { dlMenu.hidden = true; dlBtn.setAttribute('aria-expanded', 'false'); } });
+
+// Glisser-déposer une photo n'importe où sur la page
+document.addEventListener('dragover', ev => ev.preventDefault());
+document.addEventListener('drop', ev => { ev.preventDefault(); const f = [...(ev.dataTransfer?.files || [])].find(f => f.type.startsWith('image/')); if (f) onNewFile(f); });
+
+document.addEventListener('keydown', ev => {
+  if (!editor.hidden) { if (ev.key === 'Escape') closeEditor(); return; }
+  const t = ev.target;
+  if (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT|BUTTON)$/.test(t.tagName)) return;
+  if (ev.key === ' ') { ev.preventDefault(); setShowing(S.showing === 'new' ? 'current' : 'new'); }
+});
+
+/* ════════════ Toast ════════════ */
+let toastTimer = 0;
+function toast(msg, action, fn) {
+  const el = $('#toast'), b = el.querySelector('button');
+  el.querySelector('span').textContent = msg;
+  b.hidden = !action; if (action) { b.textContent = action; b.onclick = () => { el.classList.remove('show'); fn(); }; }
+  el.classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(() => el.classList.remove('show'), 5000);
+}
+
+/* ════════════ Textes du profil éditables ════════════ */
+const profile = (() => { try { return JSON.parse(store.get('profile') || '{}'); } catch { return {}; } })();
+for (const el of $$('[contenteditable][data-k]')) {
+  const k = el.dataset.k;
+  if (profile[k]) el.textContent = profile[k];
+  el.addEventListener('keydown', ev => { if (ev.key === 'Enter') { ev.preventDefault(); el.blur(); } });
+  el.addEventListener('input', () => { profile[k] = el.textContent; store.set('profile', JSON.stringify(profile)); mirror(); });
+}
+function mirror() { for (const el of $$('[data-mirror]')) el.textContent = $(`[data-k="${el.dataset.mirror}"]`).textContent; }
+mirror();
+
+/* ════════════ Démarrage ════════════ */
+(async function init() {
+  try { Object.assign(S.guides, JSON.parse(store.get('guides') || '{}')); } catch {}
+  $('#gGrid').checked = S.guides.grid; $('#gMarks').checked = S.guides.marks;
+  S.currentURL = store.get('current');
+  const src = store.get('src');
+  if (src) {
+    try {
+      S.src = toCanvas(await loadImage(src), SRC_MAX);
+      S.srcK = +store.get('srcK') || 1;
+      const e = JSON.parse(store.get('edit') || 'null');
+      if (e) S.edit = { ...defaultEdit(), ...e, adj: { ...defaultEdit().adj, ...(e.adj || {}) } };
+      commitNew();
+    } catch { S.src = null; }
+  }
+  S.showing = store.get('showing') === 'new' && S.newURL ? 'new' : 'current';
+  paintAvatars();
+  if (!S.src && !S.currentURL) toast('Importe ta nouvelle photo (bouton bleu ou glisser-déposer), puis ta photo actuelle pour comparer.');
+})();
+})();
+</script>
+</body>
+</html>
