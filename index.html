@@ -351,6 +351,7 @@ svg{display:block;flex:none}
     <div class="menu" id="dlMenu" role="menu" hidden>
       <button role="menuitem" data-dl="jpg">JPG carré<small>À uploader sur LinkedIn (il découpe le rond lui‑même)</small></button>
       <button role="menuitem" data-dl="png">PNG rond, fond transparent<small>Pour un CV, une signature mail…</small></button>
+      <button role="menuitem" data-dl="clean">Image entière, sans métadonnées<small>Sans recadrage ni filtre ; retire Content Credentials (C2PA), EXIF, GPS, XMP</small></button>
     </div>
   </div>
   <span class="ssep"></span>
@@ -450,6 +451,8 @@ const defaultEdit = () => ({ rot: 0, fh: false, fv: false, angle: 0, zoom: 1, ox
 const S = {
   src: null,          // canvas de la nouvelle photo
   srcK: 1,            // résolution d'origine / résolution de src
+  file: null,         // fichier d'origine (en mémoire seulement), pour l'export sans métadonnées
+  meta: null,         // métadonnées repérées dans ce fichier
   edit: defaultEdit(),// réglages enregistrés
   draft: null,        // réglages en cours dans la modale
   currentURL: null,   // photo actuelle (data URL)
@@ -807,6 +810,8 @@ function refreshAssist() {
     items.push(Math.abs(du) > TARGET.centerTol ? ['warn', blocked(e, du > 0 ? -.01 : .01, 0) ? `Décentré : ${EDGE}` : `Décentré : glisse la photo vers la ${du > 0 ? 'gauche' : 'droite'}`] : ['ok', 'Centrage']);
     if (S.lum != null) items.push(S.lum < 85 ? ['warn', 'Visage un peu sombre : Adjust › Brightness +'] : S.lum > 205 ? ['warn', 'Visage surexposé : Adjust › Brightness −'] : ['ok', 'Lumière']);
   }
+  const meta = metaLabels(S.meta);
+  if (meta.length) items.push(['info', `${meta.join(', ')} dans l’original : absents du fichier téléchargé`]);
   const px = Math.round(Math.min(S.src.width, S.src.height) / e.zoom * S.srcK);
   if (px < 400) items.push(['warn', `Résolution faible (${px} px) : LinkedIn recommande au moins 400 px`]);
   const ok = items.filter(i => i[0] === 'ok').length, tot = items.filter(i => i[0] !== 'info').length;
@@ -912,9 +917,32 @@ $('#saveBtn').onclick = () => {
 };
 
 /* ════════════ Imports / export ════════════ */
+/* ════════════ Métadonnées : Content Credentials (C2PA), EXIF, XMP ════════════
+   On ne fait que les repérer : tout export repasse par un canvas, qui réencode l'image de zéro
+   sans aucune métadonnée. Le manifeste C2PA vit dans une boîte JUMBF (segment APP11 en JPEG,
+   pareil en WebP/HEIF) ou dans un chunk caBX en PNG. */
+function findBytes(buf, str) {
+  const n = str.length, c0 = str.charCodeAt(0);
+  outer: for (let i = buf.indexOf(c0); i !== -1 && i <= buf.length - n; i = buf.indexOf(c0, i + 1)) {
+    for (let j = 1; j < n; j++) if (buf[i + j] !== str.charCodeAt(j)) continue outer;
+    return true;
+  }
+  return false;
+}
+async function scanMetadata(file) {
+  const b = new Uint8Array(await file.arrayBuffer()), has = s => findBytes(b, s);
+  return {
+    c2pa: has('c2pa') && (has('jumb') || has('caBX')),
+    exif: has('Exif\0\0') || has('eXIf'),
+    xmp: has('http://ns.adobe.com/xap/1.0/') || has('x:xmpmeta'),
+  };
+}
+const metaLabels = m => m ? [m.c2pa && 'Content Credentials (C2PA)', m.exif && 'EXIF', m.xmp && 'XMP'].filter(Boolean) : [];
+
 async function onNewFile(file) {
   try {
     const img = await fileToImage(file);
+    S.file = file; S.meta = await scanMetadata(file).catch(() => null);
     const c = toCanvas(img, SRC_MAX);
     S.srcK = Math.min(img.naturalWidth, img.naturalHeight) / Math.min(c.width, c.height);
     S.src = c; S.edit = defaultEdit(); S.face = null; S.faceState = 'idle';
@@ -937,11 +965,21 @@ async function onCurrentFile(file) {
 }
 async function download(kind) {
   if (!S.src) return;
-  const N = exportSize(S.edit), round = kind === 'png';
-  const c = renderOutput(S.edit, N, round);
-  const blob = await new Promise(r => c.toBlob(r, round ? 'image/png' : 'image/jpeg', .92));
+  let c, name, type, q = .92;
+  if (kind === 'clean') { // l'image d'origine telle quelle, simplement réencodée : plus aucune métadonnée
+    if (!S.file) toast('Photo d’origine plus en mémoire depuis le rechargement : export limité à 1600 px. Réimporte-la pour la pleine résolution.');
+    c = S.file ? toCanvas(await fileToImage(S.file), 16384) : S.src;
+    type = S.file?.type === 'image/png' ? 'image/png' : 'image/jpeg'; q = .95;
+    name = `photo-sans-metadonnees.${type === 'image/png' ? 'png' : 'jpg'}`;
+  } else {
+    const N = exportSize(S.edit), round = kind === 'png';
+    c = renderOutput(S.edit, N, round);
+    type = round ? 'image/png' : 'image/jpeg';
+    name = `photo-linkedin-${N}px.${round ? 'png' : 'jpg'}`;
+  }
+  const blob = await new Promise(r => c.toBlob(r, type, q));
   const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob); a.download = `photo-linkedin-${N}px.${round ? 'png' : 'jpg'}`;
+  a.href = URL.createObjectURL(blob); a.download = name;
   document.body.append(a); a.click(); a.remove();
   setTimeout(() => URL.revokeObjectURL(a.href), 5000);
 }

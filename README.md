@@ -32,6 +32,12 @@ et il s'ouvre dans le navigateur. Les photos ne quittent jamais ta machine.
 - **Téléchargement** : JPG carré (à uploader sur LinkedIn, qui découpe le rond
   lui-même) ou PNG rond à fond transparent. Le fichier est exporté à la
   résolution de la photo d'origine, de 400 à 1200 px.
+- **Sans métadonnées** : à l'import, le studio signale si la photo contient des
+  Content Credentials (C2PA), de l'EXIF (appareil, date, GPS…) ou du XMP.
+  Aucun fichier exporté n'en contient, puisque l'image est réencodée de zéro
+  par le navigateur. LinkedIn n'affiche donc pas l'icône C2PA dessus. Le menu
+  Télécharger propose aussi l'**image entière sans métadonnées**, sans
+  recadrage ni filtre.
 
 Tout est mémorisé dans le navigateur (`localStorage`) : en rouvrant la page,
 on retrouve ses photos et ses réglages.
